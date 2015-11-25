@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="null"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/><meta content="yes" name="apple-mobile-web-app-capable"/><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/><meta content="telephone=no" name="format-detection"/><meta name="description"/><title>Android编程要注意的安全规范 | ljfxyj2008的小站</title><link rel="stylesheet" type="text/css" href="/css/normalize.css"/><link rel="stylesheet" type="text/css" href="/css/pure-min.css"/><link rel="stylesheet" type="text/css" href="/css/grids-responsive-min.css"/><link rel="stylesheet" type="text/css" href="/css/style.css"/><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"/><link rel="alternate" type="application/atom+xml" href="/atom.xml"/></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Android编程要注意的安全规范</h1><a id="logo" href="/">ljfxyj2008的小站</a><p class="description">记录点滴</p></div><div id="nav-menu"><a href="/" class="current"><i class="icon-home"> 首页</i></a><a href="/archives/"><i class="icon-archive"> 归档</i></a><a href="/about/"><i class="icon-about"> 关于</i></a><a href="/atom.xml"><i class="icon-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post post-page"><h1 class="post-title">Android编程要注意的安全规范</h1><div class="post-meta">2015-09-19 | <span class="categories">分类于<a href="/categories/Android/">Android</a></span></div><span data-thread-key="2015/09/19/2015-9-19-Android编程要注意的安全规范.html" class="ds-thread-count"></span><div class="clear"><div id="toc" class="toc-article"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android框架自身的安全性机制"><span class="toc-number">1.</span> <span class="toc-text">Android框架自身的安全性机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据存储"><span class="toc-number">2.</span> <span class="toc-text">数据存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用内部存储"><span class="toc-number">2.1.</span> <span class="toc-text">使用内部存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用扩展存储"><span class="toc-number">2.2.</span> <span class="toc-text">使用扩展存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用content_providers"><span class="toc-number">2.3.</span> <span class="toc-text">使用content providers</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用权限"><span class="toc-number">3.</span> <span class="toc-text">使用权限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#请求权限"><span class="toc-number">3.1.</span> <span class="toc-text">请求权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建权限"><span class="toc-number">3.2.</span> <span class="toc-text">创建权限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用网络"><span class="toc-number">4.</span> <span class="toc-text">使用网络</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用IP网络"><span class="toc-number">4.1.</span> <span class="toc-text">使用IP网络</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用电话网络"><span class="toc-number">4.2.</span> <span class="toc-text">使用电话网络</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用WebView"><span class="toc-number">5.</span> <span class="toc-text">使用WebView</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用密码学"><span class="toc-number">6.</span> <span class="toc-text">使用密码学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用IPC"><span class="toc-number">7.</span> <span class="toc-text">使用IPC</span></a></li></ol></div></div><div class="post-content"><p>这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。</p>
+<h2 id="Android框架自身的安全性机制">Android框架自身的安全性机制</h2><ol>
+<li>Android应用程序沙盒，把每个app的数据与代码都分隔开。  </li>
+<li>对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  </li>
+<li>加密的文件系统，它能够保护丢失或被盗设备的数据。  </li>
+<li>用户能够授权权限来限制对系统和用户数据的访问。  </li>
+<li>应用程序定义的权限。</li>
+</ol>
+<h2 id="数据存储">数据存储</h2><h3 id="使用内部存储">使用内部存储</h3><ol>
+<li>默认情况下，你在内部存储上创建的文件只能被该app本身访问。  </li>
+<li>应该尽量避免在IPC文件上使用 MODE_WORLD_WRITEABLE或MODE_WORLD_READABLE模式。如果实在需要数据共享，应该使用content provider。  </li>
+<li>对于敏感数据，应该选择一个密钥对本地文件进行加密，这个密钥应该不能直接被应用程序访问。比如，把密钥保存在KeyStore中，并且用一个不存储在该设备上的用户密码来保护它。</li>
+</ol>
+<h3 id="使用扩展存储">使用扩展存储</h3><ol>
+<li>扩展存储（如SD卡）上的文件是全局可读写的（被其他应用程序）。不要在扩展存储上存放敏感信息。  </li>
+<li>处理扩展存储上的数据前最好进行输入验证。</li>
+</ol>
+<h3 id="使用content_providers">使用content providers</h3><ol>
+<li>如果不打算让其他应用程序访问你的ContentProvider，就在manifest文件中用<code>android:exported=false</code>来标记它。  </li>
+<li>如果创建的ContentProvider需要被提供给其他应用程序使用，可以特别指定单独的读权限和写权限。  </li>
+<li>如果使用ContentProvider只是在你自己的几个app之间共享数据，那么最好把<code>android:protectionLevel</code>属性设置为<code>&quot;signature&quot;</code>。  </li>
+<li>可以对content provider提供更细粒度的访问控制，如使用<code>android:grantUriPermissions</code>属性，在Intent对象中使用<code>FLAG_GRANT_READ_URI_PERMISSION</code>和<code>FLAG_GRANT_WRITE_URI_PERMISSION</code>标记。  </li>
+<li>在访问content provider时，使用参数化查询方法如query()、update()、delete()等来避免潜在的SQL注入风险。但这仍有风险，比如selection参数是通过之前用户提交的数据连接而成的。  </li>
+<li>不要对写权限的安全性产生错觉。比如，如果写权限允许写SQL语句，那么WHERE字句巧妙地构造就可以使得“写权限”等价于“读写权限”。</li>
+</ol>
+<h2 id="使用权限">使用权限</h2><h3 id="请求权限">请求权限</h3><ol>
+<li>请求最少数量的权限，如果一个权限对你的app来说不是必须的，就不要请求。  </li>
+<li>完全有可能用一种方法不请求任何权限，比如为了创建独一无二的标示符可以使用GUID而不是请求设备信息，可以把数据存储在内部存储（无须权限）而不是存储在扩展存储（需要权限）。  </li>
+<li>推荐尽可能使用访问控制，而不是用户确认的权限，因为权限可能让用户疑惑。</li>
+<li>不要泄露有权限保护的数据。</li>
+</ol>
+<h3 id="创建权限">创建权限</h3><p>这种情况很少见，因为系统定义的权限已近覆盖了大部分的需求。<br>如果必须创建新权限，考虑是否可以用<code>&quot;signature&quot;</code>级别的<code>protection level</code>来实现。</p>
+<h2 id="使用网络">使用网络</h2><h3 id="使用IP网络">使用IP网络</h3><ol>
+<li>确保对于敏感信息使用合适的协议，比如HttpsURLConnection。如果服务器支持的话，我们更倾向于使用HTTPS而不是HTTP，因为移动设备频繁的连接在不安全的网络中，比如公共Wi-Fi热点。  </li>
+<li>认证的加密的套接字级别的会话，可以很容易地用SSLSocket类来实现。  </li>
+<li>有些引用程序使用localhost网络端口来处理敏感的IPC，这种做法应该避免，因为其他应用程序也能够访问到这些接口。应该使用具有授权控制的Android IPC机制比如Service。</li>
+<li>所有通过HTTP协议或其他不安全协议获取到的数据都是不可信任的，要做好数据验证工作。</li>
+</ol>
+<h3 id="使用电话网络">使用电话网络</h3><p>SMS协议的设计本就不适合app传输数据。不管是在网络上还是设备上，SMS既没有加密也没有强壮的认证。在Android设备上，SMS消息是以广播形式传输的，所以它们可以被所有其他具有<code>READ_SMS</code>权限的应用程序读取或捕获。  </p>
+<h2 id="使用WebView">使用WebView</h2><ol>
+<li>如果你的应用程序不直接通过webview使用JavaScript，那么就不要调用<code>setJavaScriptEnabled()</code>。默认情况下webview是不执行JavaScript的，这样就可以防止跨站脚本攻击。  </li>
+<li>只把<code>addJavaScriptInterface()</code>暴露给具有可信输入的网页。  </li>
+<li>如果你的应用程序通过WebView访问敏感数据，你可以使用    <code>clearCache()</code>方法来删除任何存储在本地的文件。也可以使用服务器端的header比如<code>no-cache</code>来表明一个应用程序不应该缓存特定的内容。</li>
+<li>用户名和密码不应该存储在设备上。初次认证的时候使用用户提供的用户名和密码，以后就使用一个短生命周期的、service特有的认证token。</li>
+<li>被多个应用程序访问的Service应该使用AccountManager来访问。</li>
+</ol>
+<h2 id="使用密码学">使用密码学</h2><ol>
+<li>如果需要安全地从已知位置获取一个文件，可以很简单地使用<code>HTTPS URI</code>。  </li>
+<li>如果需要安全数据通道，考虑使用<code>HttpsURLConnection</code>或者<code>SSLSocket</code>，而不是去写一个你自己的协议。  </li>
+<li>如果你真的需要实现自己的协议，也不要自己实现加密算法，可以直接只用存在的已实现的加密算法，比如<code>Cipher</code>类中的AES或者RSA算法。  </li>
+<li>使用安全随机数生成器<code>SecureRandom</code>来初始化任何的密钥、<code>KeyGenerator</code>。使用非安全随机数生成器得到的密钥，会削弱算法的安全强度，也会导致离线攻击。</li>
+<li>如果需要存储一个密钥来提供多次使用，应该使用诸如<code>KeyStore</code>之类的机制。  </li>
+</ol>
+<h2 id="使用IPC">使用IPC</h2><ol>
+<li>不要使用传统Linux中的IPC技术比如网络套接字和共享文件等。应该使用Android系统提供的IPC功能比如Intent、与Service配合的Binder或者Messenger、BroadcastReceiver。Android的IPC机制允许你验证连接到你IPC的应用程序的身份，并且能够为每个IPC机制设置安全策略。  </li>
+<li>如果你的IPC机制不打算给其他应用程序使用，可以在manifest清单中把<code>android:exported</code>属性设置为<code>false</code>。  </li>
+</ol>
+<hr>
+<p>其他安全性相关问题，可以参考:<br>1、<a href="http://developer.android.com/training/best-security.html" target="_blank" rel="external">http://developer.android.com/training/best-security.html</a><br>2、<a href="https://www.owasp.org/index.php/OWASP_Mobile_Security_Project#tab=Secure_Mobile_Development" target="_blank" rel="external">https://www.owasp.org/index.php/OWASP_Mobile_Security_Project#tab=Secure_Mobile_Development</a></p>
+</div><div class="tags"><a href="/tags/Android/">Android</a><a href="/tags/安全/">安全</a></div><div class="post-nav"><a href="/2015/10/10/FlatBuffers学习总结.html" class="pre"><i class="icon-previous">FlatBuffers学习总结</i></a><a href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html" class="next">《Think in Java》类型信息 – 学习笔记<i class="icon-next"></i></a></div><div data-thread-key="2015/09/19/2015-9-19-Android编程要注意的安全规范.html" data-title="Android编程要注意的安全规范" data-url="http://www.carrotsight.com/2015/09/19/2015-9-19-Android编程要注意的安全规范.html" class="ds-share flat"><div class="ds-share-inline"><ul class="ds-share-icons-16"><li data-toggle="ds-share-icons-more"><a href="javascript:void(0);" class="ds-more">分享到：</a></li><li><a href="javascript:void(0);" data-service="weibo" class="ds-weibo">微博</a></li><li><a href="javascript:void(0);" data-service="qzone" class="ds-qzone">QQ空间</a></li><li><a href="javascript:void(0);" data-service="qqt" class="ds-qqt">腾讯微博</a></li><li><a href="javascript:void(0);" data-service="wechat" class="ds-wechat">微信</a></li></ul><div class="ds-share-icons-more"></div></div></div><div data-thread-key="2015/09/19/2015-9-19-Android编程要注意的安全规范.html" data-title="Android编程要注意的安全规范" data-url="http://www.carrotsight.com/2015/09/19/2015-9-19-Android编程要注意的安全规范.html" data-author-key="1" class="ds-thread"></div></div></div></div><div class="pure-u-1-4"><div id="sidebar"><div class="widget"><input placeholder="Search" type="text" class="st-default-search-input"/></div><div class="widget"><div class="widget-title">分类</div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Flex/">Flex</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li></ul></div><div class="widget"><div class="widget-title">标签</div><div class="tagcloud"><a href="/tags/EventBus/" style="font-size: 15px;">EventBus</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/并发/" style="font-size: 15px;">并发</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/安全/" style="font-size: 15px;">安全</a> <a href="/tags/reflection/" style="font-size: 15px;">reflection</a> <a href="/tags/反射/" style="font-size: 15px;">反射</a> <a href="/tags/多线程/" style="font-size: 15px;">多线程</a> <a href="/tags/Otto/" style="font-size: 15px;">Otto</a> <a href="/tags/观察者模式/" style="font-size: 15px;">观察者模式</a> <a href="/tags/日志/" style="font-size: 15px;">日志</a> <a href="/tags/库项目/" style="font-size: 15px;">库项目</a> <a href="/tags/facebook/" style="font-size: 15px;">facebook</a> <a href="/tags/FlatBuffers/" style="font-size: 15px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 15px;">Google</a></div></div><div class="widget"><div class="widget-title">最新文章</div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2015/11/13/一个android日志库的实现.html">一个android日志库的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/10/FlatBuffers学习总结.html">FlatBuffers学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html">Android编程要注意的安全规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">《Think in Java》类型信息 – 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/15/2015-9-15-Otto学习笔记.html">Otto学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/14/2015-9-14-EventBus学习总结.html">EventBus学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html">《Think in Java》并发 - 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html">【FLEX bug:无法启动服务，因为fml文件损坏】的解决办法</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html">Flex中datagrid中checkbox的全选实现</a></li></ul></div><div class="widget"><div class="comments-title">最近评论</div><div data-num-items="5" data-show-avatars="0" data-show-time="1" data-show-admin="0" data-excerpt-length="32" data-show-title="1" class="ds-recent-comments"></div></div><div class="widget"><div class="widget-title">友情链接</div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div></div><div id="footer">© <a href="/" rel="nofollow">ljfxyj2008的小站.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div><a id="rocket" href="#top" class="show"></a><script src="/js/jquery.min.js" type="text/javascript"></script>
+<script src="/js/totop.js" type="text/javascript"></script><script src="/js/fancybox.pack.js" type="text/javascript"></script>
+<script src="/js/jquery.fancybox.js" type="text/javascript"></script><link rel="stylesheet" href="/css/jquery.fancybox.css" type="text/css"><script>var duoshuoQuery = {short_name:'carrotsight'};
+(function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0]
+        || document.getElementsByTagName('body')[0]).appendChild(ds);
+})();
+</script><script>(function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+(w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+})(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+_st('install','＃{theme.swiftype}','2.0.0');</script></div></body></html>
