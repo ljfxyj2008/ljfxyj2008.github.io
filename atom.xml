@@ -429,7 +429,7 @@
     <link href="http://www.carrotsight.com/2015/09/14/2015-9-14-EventBus%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93.html"/>
     <id>http://www.carrotsight.com/2015/09/14/2015-9-14-EventBus学习总结.html</id>
     <published>2015-09-14T12:12:43.000Z</published>
-    <updated>2015-11-25T13:13:33.000Z</updated>
+    <updated>2015-12-02T13:07:27.000Z</updated>
     <content type="html"><![CDATA[<p>这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
 <p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
 <h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"></p>
@@ -462,6 +462,14 @@
 <p><strong><em>注意：</em></strong>  </p>
 <p>如果第一个接收到时间的订阅者在任何一个订阅函数中对接收到的event的内容做了修改，那么后续的其他订阅者的所有onEventXXX函数接受到的event也都是被修改的。即<strong>post操作只产生一个event对象，所有订阅者的onEventXXX函数接受到的都是同一个对象的引用</strong>。</p>
 <p>如果event被生产者post之后，订阅者接收到了事件并足够快的对该event的某些字段做了修改，那么生产者在post语句之后对event的引用也会体现出字段的修改。这里的“足够快”没有定论，实验的每次结果都有差异，不过基本的规律是生产者的post（）语句之后的下一条语句，会在所有订阅者的onEvent()和onEventMainThread()都执行完成后才执行。而onEventAsync()和onEventBackgroundThread()相对于post（）下一条语句的执行顺序则没有定论。</p>
+<h2 id="关于cancelEventDelivery的问题">关于cancelEventDelivery的问题</h2><p>如果在post线程的onEvent方法中，先有一段特别耗时的操作，然后才调用cancelEventDelivery，那么后面的订阅者有可能因为cancelEventDelivery没被即时执行而接收到事件吗？比如订阅者1的onEvent方法是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onEvent</span><span class="params">(TextEvent event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">99999999</span>; i++) &#123;</span><br><span class="line">                <span class="keyword">int</span> a = i;</span><br><span class="line">            &#125;</span><br><span class="line">            EventBus.getDefault().cancelEventDelivery(event);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么本该在订阅者1后面才接收到事件的订阅者2会接收到event吗？也许EventBus会在for循环这段时间内已近把事件传递给订阅者2了，毕竟这时还没有执行EventBus.getDefault().cancelEventDelivery(event)？</p>
+<p>带着这个问题，跟进了一下EventBus的源码，有以下发现。  </p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-2/91530689.jpg" alt=""></p>
+<p>在事件生产者调用post方法时，Eventbus内部是通过调用这个postSingleEventForEventType<br>方法来进行消息传递的，一旦EventBus.getDefault().cancelEventDelivery<br>(event)方法被调用，aborted就被置为false，这个for循环就会停止，消息不会再向后面任何订阅者的任何一种线程函数传递。<br>由于cancelEventDelivery方法只能在post线程的onEvent函数中调用，而这里的postToSubscription方法对于post线程的执行是同步的，所以即使某个订阅者在post线程的onEvent中先进行耗时操作再调用cancelEventDelivery，后面的订阅者也接受不到这个事件，因为postSingleEventForEventType方法还在等待2返回（同步方法）。  </p>
+<p>postToSubscription的内部实现如下：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-2/70984573.jpg" alt=""></p>
+<p>我用代码在各种线程中都试过了，确实不用担心cancelEventDelivery之前的耗时操作导致在耗时操作期间事件仍然被传递的问题。只有一种例外，就是在post线程的onThread方法中再启新线程进行cancelEventDelivery调用，不会这样做没有意义，因为eventbus已经提供了4种线程模型了，不需要这样多此一举， 相信不会有人这样写代码，就像下面这样：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-2/40991601.jpg" alt=""></p>
 <h2 id="基本用法流程3步搞定">基本用法流程3步搞定</h2><p>1.定义事件  </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageEvent</span> </span>&#123; <span class="comment">/* Additional fields if needed */</span> &#125;</span><br></pre></td></tr></table></figure>
 <p>2.注册订阅者</p>
