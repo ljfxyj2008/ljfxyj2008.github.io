@@ -164,16 +164,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -190,6 +180,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -319,7 +319,7 @@
       
         <span itemprop="articleBody"><p>这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
 <p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
-<h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"></p>
+<h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"><br><a id="more"></a></p>
 <h2 id="特点">特点</h2><p>“事件”是一个POJO，根据自己需要自己随便定义的一个JAVA类，包含需要传递给其他组件的信息。  </p>
 <p>事件发布者不需要注册，直接使用EventBus.getDefault().post(new TextEvent(“我有一头小毛驴”))。其中TextEvent是一个自定义类。  </p>
 <p>事件订阅者（接受者、处理者）需要在onCreate()方法中通过EventBus.getDefault().register(this)注册自己，在onDestroy()方法中通过EventBus.getDefault().unregister(this)取消注册。同时，需要至少实现4种onEventXXX方法中的一种。   </p>
@@ -552,7 +552,7 @@
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

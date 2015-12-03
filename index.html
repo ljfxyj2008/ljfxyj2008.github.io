@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="ljfxyj2008, android, carrotsight" />
 
 
 
@@ -158,16 +158,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -184,6 +174,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -321,9 +321,9 @@
 
       
         
-          <span itemprop="description">在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。</span>
+          <h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/11/13/一个android日志库的实现.html">
+            <a class="btn" href="/2015/11/13/一个android日志库的实现.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -424,14 +424,10 @@
 
       
         
-          <span itemprop="articleBody">
-            
-            据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博客、以及其他国内的个人博客，也写了些代码做实验，以此文作为学习总结。
-什么是Google FlatBuffersFlatBuf
-            ...
-          </span>
+          <p>据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博客、以及其他国内的个人博客，也写了些代码做实验，以此文作为学习总结。</p>
+<h2 id="什么是Google_FlatBuffers">什么是Google FlatBuffers</h2><p>FlatBuffers是一个开源的、跨平台的、高效的、提供了C++/Java接口的序列化工具库。它是Google专门为游戏开发或其他性能敏感的应用程序需求而创建。尤其更适用于移动平台，这些平台上内存大小及带宽相比桌面系统都是受限的，而应用程序比如游戏又有更高的性能要求。它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而不需要任何解析开销。<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/10/10/FlatBuffers学习总结.html#more" rel="contents">
+            <a class="btn" href="/2015/10/10/FlatBuffers学习总结.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -532,18 +528,15 @@
 
       
         
-          <span itemprop="articleBody">
-            
-            这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。
-Android框架自身的安全性机制
-Android应用程序沙盒，把每个app的数据与代码都分隔开。  
-对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  
-加密的文件系统，它能够保护丢失或被盗设备的数据。  
-用户能够授权权
-            ...
-          </span>
+          <p>这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。</p>
+<h2 id="Android框架自身的安全性机制">Android框架自身的安全性机制</h2><ol>
+<li>Android应用程序沙盒，把每个app的数据与代码都分隔开。  </li>
+<li>对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  </li>
+<li>加密的文件系统，它能够保护丢失或被盗设备的数据。  </li>
+<li>用户能够授权权限来限制对系统和用户数据的访问。  </li>
+<li>应用程序定义的权限。
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html#more" rel="contents">
+            <a class="btn" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -644,9 +637,11 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 
       
         
-          <span itemprop="description">Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。</span>
+          <h2 id="Class对象">Class对象</h2><p>Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。<br>每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  </p>
+<p>Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.class来获得。其中，getClass()方法属于根类Object的一部分。”.class”称为<em>类字面常量</em>，他在编译时就会受到检查，所以更安全，也更高效。  </p>
+<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">
+            <a class="btn" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -747,9 +742,14 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 
       
         
-          <span itemprop="description">在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下，并写demo做了些实验，发现网上很多博客对otto的生产者的@Produce解释不太准确。于是总结了这篇学习笔记。</span>
+          <p>在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。</p>
+<p><strong><br>本文的Otto指的是：square/otto<br>EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。
+</strong></p>
+<p>本文档前面是对Otto各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
+<h2 id="特点">特点</h2><p>Otto的作用与EventBus类似，都是用于组件间通信，降低不同的类相互之间的耦合。如果不熟悉EventBus，可以先了解EventBus，下文涉及到otto与EventBus的对比。</p>
+<p>Otto可以随便定义订阅者的消息处理函数的函数名，采用注解的方式来识别生产函数和消费函数（@Produce和@Subscribe），这是与EventBus明显的不同。<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/09/15/2015-9-15-Otto学习笔记.html">
+            <a class="btn" href="/2015/09/15/2015-9-15-Otto学习笔记.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -850,14 +850,11 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 
       
         
-          <span itemprop="articleBody">
-            
-            这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的详细使用实例部分。
-本文EventBus指的是：greenrobot/EventBusGithub上有很多同名项目，不要搞错。EventBus是使用观察者模式来替代Intent、Handler、Broadc
-            ...
-          </span>
+          <p>这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
+<p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
+<h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"><br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/09/14/2015-9-14-EventBus学习总结.html#more" rel="contents">
+            <a class="btn" href="/2015/09/14/2015-9-14-EventBus学习总结.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -958,15 +955,11 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 
       
         
-          <span itemprop="articleBody">
-            
-            1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  
-2.ExecutorService知道如何构建恰当的上下文来执行Runnable对象。  
-3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时
-            ...
-          </span>
+          <p>1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  </p>
+<p>2.ExecutorService知道如何构建恰当的上下文来执行Runnable对象。  </p>
+<p>3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时停止创建新线程，因此它是合理的Executor的首选。只有当这种方式会引发问题时，才需要切换到FixedThreadPool。<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html#more" rel="contents">
+            <a class="btn" href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1067,9 +1060,11 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 
       
         
-          <span itemprop="description">在Flash Builder中，提示 FLEX bug:无法启动服务，因为fml文件损坏。</span>
+          <p>在Flash Builder中，提示</p>
+<blockquote>
+<p>FLEX bug:无法启动服务，因为fml文件损坏。<br>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html">
+            <a class="btn" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1170,14 +1165,10 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 
       
         
-          <span itemprop="articleBody">
-            
-            假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：
-123456789protected function chkChooseAll_changeHandler(event:Event):void&#123;   for each(var item:XML in adg.dataProvider)   &#123;       item.@selected = chkCh
-            ...
-          </span>
+          <p>假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">chkChooseAll_changeHandler</span><span class="params">(event:Event)</span><span class="type">:void</span></span><br><span class="line"></span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> <span class="keyword">each</span>(<span class="keyword">var</span> item:XML <span class="keyword">in</span> adg.dataProvider)</span><br><span class="line">   &#123;</span><br><span class="line">       item.@selected = chkChooseAll.selected;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <div class="post-more-link text-center">
-            <a class="btn" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html#more" rel="contents">
+            <a class="btn" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1285,7 +1276,7 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

@@ -53,17 +53,20 @@
 
 
 
-<meta name="description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下，并写demo做了些实验，发现网上很多博客对otto的生产者的@Produce解释不太准确。于是总结了这篇学习笔记。">
+<meta name="description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。
+本文的Ott">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Otto学习笔记">
 <meta property="og:url" content="http://www.carrotsight.com/2015/09/15/2015-9-15-Otto学习笔记.html">
 <meta property="og:site_name" content="ljfxyj2008的小站">
-<meta property="og:description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下，并写demo做了些实验，发现网上很多博客对otto的生产者的@Produce解释不太准确。于是总结了这篇学习笔记。">
+<meta property="og:description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。
+本文的Ott">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/24002070.jpg">
 <meta property="og:updated_time" content="2015-12-02T04:19:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Otto学习笔记">
-<meta name="twitter:description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下，并写demo做了些实验，发现网上很多博客对otto的生产者的@Produce解释不太准确。于是总结了这篇学习笔记。">
+<meta name="twitter:description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。
+本文的Ott">
 
 
 
@@ -158,16 +161,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -184,6 +177,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -316,7 +319,7 @@
 </strong></p>
 <p>本文档前面是对Otto各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
 <h2 id="特点">特点</h2><p>Otto的作用与EventBus类似，都是用于组件间通信，降低不同的类相互之间的耦合。如果不熟悉EventBus，可以先了解EventBus，下文涉及到otto与EventBus的对比。</p>
-<p>Otto可以随便定义订阅者的消息处理函数的函数名，采用注解的方式来识别生产函数和消费函数（@Produce和@Subscribe），这是与EventBus明显的不同。 </p>
+<p>Otto可以随便定义订阅者的消息处理函数的函数名，采用注解的方式来识别生产函数和消费函数（@Produce和@Subscribe），这是与EventBus明显的不同。<br><a id="more"></a></p>
 <h2 id="PUBLISHING、SUBSCRIBING与PRODUCING">PUBLISHING、SUBSCRIBING与PRODUCING</h2><p>虽然同样是订阅者模式的实现，但是Otto与Eventbus相比，多了一个“PRODUCING”的概念（Eventbus中只有PUBLISHING和SUBSCRIBING的概念）。<br>其实这里的PRODUCING设计的初衷与Eventbus中的StickyEvent是相似的，都是为了能够取到某中类型的事件的最新值，但在实现上有较大差异。</p>
 <h3 id="订阅事件">订阅事件</h3><p><strong>用来消耗（或者说处理）事件的是订阅者，必须用@Subscribe标注。</strong>  订阅者（假定是一个Activity）需要在初始化时（onCreate()方法或onResume()方法中）使用register（）方法向总线注册，在onDestroy（）或onPause（）时调用unregister（）从总线反注册。  </p>
 <h3 id="发布事件">发布事件</h3><h4 id="PUBLISHING">PUBLISHING</h4><p>而产生（或者说发布）事件的方式有两种，一种是不使用@Produce标注，这种方式被otto官方文档称为<strong>PUBLISHING</strong>，方法是直接调用bus对象的post方法，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MyApplicationUtil.bus.post(<span class="keyword">new</span> TextEvent(<span class="string">"这是PUBLISHING事件: "</span> + <span class="keyword">new</span> Date()));</span><br></pre></td></tr></table></figure>   </p>
@@ -519,7 +522,7 @@
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

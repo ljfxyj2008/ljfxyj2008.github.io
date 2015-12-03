@@ -63,7 +63,7 @@
 <meta property="og:description" content="1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  
 2.ExecutorService知道如何构建恰当的上下文来执行Runnable对象。  
 3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时">
-<meta property="og:updated_time" content="2015-11-25T13:22:46.000Z">
+<meta property="og:updated_time" content="2015-12-03T08:07:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Think in Java》并发 - 学习笔记">
 <meta name="twitter:description" content="1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  
@@ -163,16 +163,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -189,6 +179,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -318,8 +318,7 @@
       
         <span itemprop="articleBody"><p>1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  </p>
 <p>2.ExecutorService知道如何构建恰当的上下文来执行Runnable对象。  </p>
-<p>3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时停止创建新线程，因此它是合理的Executor的首选。只有当这种方式会引发问题时，才需要切换到FixedThreadPool。</p>
-<p>4.SingleThreadExecutor就像是线程数量为1的FixedThreadPool。如果向SingleThreadExecutor提交了多个任务，那么这些任务将排队，每个任务都会在下一个任务开始之前运行结束，所有的任务将使用相同的线程。SingleThreadExecutor会序列化所有提交给它的任务，并会维护它自己（隐藏）的悬挂任务队列。<br>SingleThreadExecutor确保任何时刻在任何线程中都只有唯一的任务在运行，就不需要在共享资源上处理同步。  </p>
+<p>3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时停止创建新线程，因此它是合理的Executor的首选。只有当这种方式会引发问题时，才需要切换到FixedThreadPool。<br><a id="more"></a><br>4.SingleThreadExecutor就像是线程数量为1的FixedThreadPool。如果向SingleThreadExecutor提交了多个任务，那么这些任务将排队，每个任务都会在下一个任务开始之前运行结束，所有的任务将使用相同的线程。SingleThreadExecutor会序列化所有提交给它的任务，并会维护它自己（隐藏）的悬挂任务队列。<br>SingleThreadExecutor确保任何时刻在任何线程中都只有唯一的任务在运行，就不需要在共享资源上处理同步。  </p>
 <p>5.Runnable是执行工作的独立任务，但是他不返回任何值。如果希望任务在完成时能够返回一个值，那么可以实现Callable接口而不是Runnable接口。在Java SE5中引入的Callable是一种具有类型参数的泛型，它的类型参数表示的是从方法call（）（而不是run（））中返回的值，并且必须使用ExecutorService.submit（）方法调用它。<br>测试代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TaskWithResult</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">TaskWithResult</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Thread.sleep((<span class="keyword">new</span> Random()).nextInt(<span class="number">2000</span>) + <span class="number">1000</span>);<span class="comment">//在这里随机睡眠时间，为了测试Future.isDone()的效果</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">"TaskWithResult id: "</span> + id;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CallableTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService exec = Executors.newCachedThreadPool();</span><br><span class="line">		ArrayList&lt;Future&lt;String&gt;&gt; results = <span class="keyword">new</span> ArrayList&lt;Future&lt;String&gt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">			results.add(exec.submit(<span class="keyword">new</span> TaskWithResult(i)));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>(Future&lt;String&gt; fs : results)&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				System.out.println(<span class="string">"\n==taskIndex "</span> + results.indexOf(fs) + <span class="string">"=="</span>);</span><br><span class="line">				System.out.println(<span class="string">"isDone(): "</span> + fs.isDone());</span><br><span class="line">				System.out.println(fs.get());</span><br><span class="line">				System.out.println(<span class="string">"isDone(): "</span> + fs.isDone());</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">				exec.shutdown();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
@@ -538,7 +537,7 @@
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

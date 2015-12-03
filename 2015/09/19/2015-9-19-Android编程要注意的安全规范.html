@@ -69,7 +69,7 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  
 加密的文件系统，它能够保护丢失或被盗设备的数据。  
 用户能够授权权">
-<meta property="og:updated_time" content="2015-11-25T12:28:31.000Z">
+<meta property="og:updated_time" content="2015-12-03T08:08:03.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android编程要注意的安全规范">
 <meta name="twitter:description" content="这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。
@@ -172,16 +172,6 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -198,6 +188,16 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -331,9 +331,8 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
 <li>对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  </li>
 <li>加密的文件系统，它能够保护丢失或被盗设备的数据。  </li>
 <li>用户能够授权权限来限制对系统和用户数据的访问。  </li>
-<li>应用程序定义的权限。</li>
-</ol>
-<h2 id="数据存储">数据存储</h2><h3 id="使用内部存储">使用内部存储</h3><ol>
+<li>应用程序定义的权限。<a id="more"></a>
+<h2 id="数据存储">数据存储</h2><h3 id="使用内部存储">使用内部存储</h3></li>
 <li>默认情况下，你在内部存储上创建的文件只能被该app本身访问。  </li>
 <li>应该尽量避免在IPC文件上使用 MODE_WORLD_WRITEABLE或MODE_WORLD_READABLE模式。如果实在需要数据共享，应该使用content provider。  </li>
 <li>对于敏感数据，应该选择一个密钥对本地文件进行加密，这个密钥应该不能直接被应用程序访问。比如，把密钥保存在KeyStore中，并且用一个不存储在该设备上的用户密码来保护它。</li>
@@ -529,7 +528,7 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

@@ -53,16 +53,16 @@
 
 
 
-<meta name="description" content="在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
+<meta name="description" content="调研在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一个android日志库的实现">
 <meta property="og:url" content="http://www.carrotsight.com/2015/11/13/一个android日志库的实现.html">
 <meta property="og:site_name" content="ljfxyj2008的小站">
-<meta property="og:description" content="在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
-<meta property="og:updated_time" content="2015-12-01T05:10:17.000Z">
+<meta property="og:description" content="调研在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
+<meta property="og:updated_time" content="2015-12-03T08:08:34.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个android日志库的实现">
-<meta name="twitter:description" content="在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
+<meta name="twitter:description" content="调研在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
 
 
 
@@ -157,16 +157,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -183,6 +173,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -310,7 +310,7 @@
       
 
       
-        <span itemprop="articleBody"><h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br>在网上做了一下android平台日志库的调研，挑出一些比较有代表性有影响力的，大致结果如下：</p>
+        <span itemprop="articleBody"><h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br><a id="more"></a><br>在网上做了一下android平台日志库的调研，挑出一些比较有代表性有影响力的，大致结果如下：</p>
 <blockquote>
 <p>①orhanobut/logger：<br>来自github.com，截止2015年11月10日15:53:20该项目已经有1996颗星！！！<br>地址：<a href="https://github.com/orhanobut/logger" target="_blank" rel="external">https://github.com/orhanobut/logger</a></p>
 <p>②JakeWharton/timber：<br>来自github.com，截止2015年11月10日15:54:22该项目已经有1571颗星！！！<br>地址：<a href="https://github.com/JakeWharton/timber" target="_blank" rel="external">https://github.com/JakeWharton/timber</a></p>
@@ -499,7 +499,7 @@
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

@@ -53,16 +53,19 @@
 
 
 
-<meta name="description" content="Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。">
+<meta name="description" content="Class对象Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  
+Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.cl">
 <meta property="og:type" content="article">
 <meta property="og:title" content="《Think in Java》类型信息 – 学习笔记">
 <meta property="og:url" content="http://www.carrotsight.com/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">
 <meta property="og:site_name" content="ljfxyj2008的小站">
-<meta property="og:description" content="Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。">
-<meta property="og:updated_time" content="2015-11-25T13:01:56.000Z">
+<meta property="og:description" content="Class对象Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  
+Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.cl">
+<meta property="og:updated_time" content="2015-12-03T08:07:51.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="《Think in Java》类型信息 – 学习笔记">
-<meta name="twitter:description" content="Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。">
+<meta name="twitter:description" content="Class对象Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  
+Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.cl">
 
 
 
@@ -157,16 +160,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -183,6 +176,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -312,8 +315,7 @@
       
         <span itemprop="articleBody"><h2 id="Class对象">Class对象</h2><p>Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。<br>每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  </p>
 <p>Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.class来获得。其中，getClass()方法属于根类Object的一部分。”.class”称为<em>类字面常量</em>，他在编译时就会受到检查，所以更安全，也更高效。  </p>
-<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。</p>
-<p>Class对象包含很多有用的方法，能够了解一个类型的所有信息，比如：  </p>
+<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。<br><a id="more"></a><br>Class对象包含很多有用的方法，能够了解一个类型的所有信息，比如：  </p>
 <ol>
 <li>getName（）：产生全限定的类名  </li>
 <li>getSimpleName（）：产生不含包名的类名  </li>
@@ -484,7 +486,7 @@
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

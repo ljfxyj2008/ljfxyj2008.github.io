@@ -35,7 +35,7 @@
 <link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="ljfxyj2008, android, carrotsight" />
 
 
 
@@ -62,7 +62,7 @@
 <meta property="og:description" content="假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：
 123456789protected function chkChooseAll_changeHandler(event:Event):void&amp;#123;   for each(var item:XML in adg.dataProvider)   &amp;#123;       item.@selected = chkCh">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/FlexItemRender.png">
-<meta property="og:updated_time" content="2015-11-26T01:47:51.000Z">
+<meta property="og:updated_time" content="2015-12-03T08:05:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Flex中datagrid中checkbox的全选实现">
 <meta name="twitter:description" content="假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：
@@ -161,16 +161,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -187,6 +177,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -316,6 +316,7 @@
       
         <span itemprop="articleBody"><p>假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：</p>
 <figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">chkChooseAll_changeHandler</span><span class="params">(event:Event)</span><span class="type">:void</span></span><br><span class="line"></span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> <span class="keyword">each</span>(<span class="keyword">var</span> item:XML <span class="keyword">in</span> adg.dataProvider)</span><br><span class="line">   &#123;</span><br><span class="line">       item.@selected = chkChooseAll.selected;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <p>即将表格数据源对应项的selectd属性设置为全选框的选中状态。</p>
 <p>下面主要要处理表格中chkCol列对属性改变的响应，即自动更新全选状态。方法为：<br>在itemRender中，重载data属性的set方法，如下：</p>
 <figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">set</span> <span class="title">data</span><span class="params">(value:Object)</span><span class="type">:void</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(value.@selected == <span class="string">"true"</span>)</span><br><span class="line">    &#123;</span><br><span class="line">         chkbox.selected = <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">         chkbox.selected = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -454,7 +455,7 @@
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

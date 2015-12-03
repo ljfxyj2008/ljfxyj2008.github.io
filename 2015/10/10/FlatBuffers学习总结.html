@@ -64,7 +64,7 @@
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/屏幕快照%202015-09-30%20下午3.08.24.png">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-10-10/60479922.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-10-8/13378046.jpg">
-<meta property="og:updated_time" content="2015-11-25T12:25:27.000Z">
+<meta property="og:updated_time" content="2015-12-03T08:08:13.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="FlatBuffers学习总结">
 <meta name="twitter:description" content="据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博客、以及其他国内的个人博客，也写了些代码做实验，以此文作为学习总结。
@@ -163,16 +163,6 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
-            
-              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
-            
-            关于
-          </a>
-        </li>
-      
-        
         <li class="menu-item menu-item-archives">
           <a href="/archives" rel="section">
             
@@ -189,6 +179,16 @@
               <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
             
             标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
           </a>
         </li>
       
@@ -317,7 +317,7 @@
 
       
         <span itemprop="articleBody"><p>据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博客、以及其他国内的个人博客，也写了些代码做实验，以此文作为学习总结。</p>
-<h2 id="什么是Google_FlatBuffers">什么是Google FlatBuffers</h2><p>FlatBuffers是一个开源的、跨平台的、高效的、提供了C++/Java接口的序列化工具库。它是Google专门为游戏开发或其他性能敏感的应用程序需求而创建。尤其更适用于移动平台，这些平台上内存大小及带宽相比桌面系统都是受限的，而应用程序比如游戏又有更高的性能要求。它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而不需要任何解析开销。</p>
+<h2 id="什么是Google_FlatBuffers">什么是Google FlatBuffers</h2><p>FlatBuffers是一个开源的、跨平台的、高效的、提供了C++/Java接口的序列化工具库。它是Google专门为游戏开发或其他性能敏感的应用程序需求而创建。尤其更适用于移动平台，这些平台上内存大小及带宽相比桌面系统都是受限的，而应用程序比如游戏又有更高的性能要求。它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而不需要任何解析开销。<br><a id="more"></a></p>
 <h2 id="为什么要使用Google_FlatBuffers">为什么要使用Google FlatBuffers</h2><ol>
 <li>对序列化数据的访问不需要打包和拆包——它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而没有任何解析开销；  </li>
 <li>内存效率和速度——访问数据时的唯一内存需求就是缓冲区，不需要额外的内存分配；   </li>
@@ -572,7 +572,7 @@
               <span class="links-of-author-item">
                 <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
                   
-                    <i class="fa fa-globe"></i> Facebook
+                    <i class="fa fa-globe"></i> facebook
                   
                 </a>
               </span>

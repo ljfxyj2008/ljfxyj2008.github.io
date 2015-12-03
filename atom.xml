@@ -4,7 +4,7 @@
   <subtitle><![CDATA[记录点滴]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://www.carrotsight.com/"/>
-  <updated>2015-12-01T05:10:17.000Z</updated>
+  <updated>2015-12-03T08:08:34.000Z</updated>
   <id>http://www.carrotsight.com/</id>
   
   <author>
@@ -19,8 +19,8 @@
     <link href="http://www.carrotsight.com/2015/11/13/%E4%B8%80%E4%B8%AAandroid%E6%97%A5%E5%BF%97%E5%BA%93%E7%9A%84%E5%AE%9E%E7%8E%B0.html"/>
     <id>http://www.carrotsight.com/2015/11/13/一个android日志库的实现.html</id>
     <published>2015-11-13T06:12:58.000Z</published>
-    <updated>2015-12-01T05:10:17.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br>在网上做了一下android平台日志库的调研，挑出一些比较有代表性有影响力的，大致结果如下：</p>
+    <updated>2015-12-03T08:08:34.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br><a id="more"></a><br>在网上做了一下android平台日志库的调研，挑出一些比较有代表性有影响力的，大致结果如下：</p>
 <blockquote>
 <p>①orhanobut/logger：<br>来自github.com，截止2015年11月10日15:53:20该项目已经有1996颗星！！！<br>地址：<a href="https://github.com/orhanobut/logger" target="_blank" rel="external">https://github.com/orhanobut/logger</a></p>
 <p>②JakeWharton/timber：<br>来自github.com，截止2015年11月10日15:54:22该项目已经有1571颗星！！！<br>地址：<a href="https://github.com/JakeWharton/timber" target="_blank" rel="external">https://github.com/JakeWharton/timber</a></p>
@@ -68,7 +68,7 @@
 <p>3、在调试时发现初始化貌似很耗时，跟踪了一下，发现new FileHandler()这一操作居然要耗时30~40ms!!!</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。]]>
+    <![CDATA[<h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br>]]>
     
     </summary>
     
@@ -87,9 +87,9 @@
     <link href="http://www.carrotsight.com/2015/10/10/FlatBuffers%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93.html"/>
     <id>http://www.carrotsight.com/2015/10/10/FlatBuffers学习总结.html</id>
     <published>2015-10-10T13:37:08.000Z</published>
-    <updated>2015-11-25T12:25:27.000Z</updated>
+    <updated>2015-12-03T08:08:13.000Z</updated>
     <content type="html"><![CDATA[<p>据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博客、以及其他国内的个人博客，也写了些代码做实验，以此文作为学习总结。</p>
-<h2 id="什么是Google_FlatBuffers">什么是Google FlatBuffers</h2><p>FlatBuffers是一个开源的、跨平台的、高效的、提供了C++/Java接口的序列化工具库。它是Google专门为游戏开发或其他性能敏感的应用程序需求而创建。尤其更适用于移动平台，这些平台上内存大小及带宽相比桌面系统都是受限的，而应用程序比如游戏又有更高的性能要求。它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而不需要任何解析开销。</p>
+<h2 id="什么是Google_FlatBuffers">什么是Google FlatBuffers</h2><p>FlatBuffers是一个开源的、跨平台的、高效的、提供了C++/Java接口的序列化工具库。它是Google专门为游戏开发或其他性能敏感的应用程序需求而创建。尤其更适用于移动平台，这些平台上内存大小及带宽相比桌面系统都是受限的，而应用程序比如游戏又有更高的性能要求。它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而不需要任何解析开销。<br><a id="more"></a></p>
 <h2 id="为什么要使用Google_FlatBuffers">为什么要使用Google FlatBuffers</h2><ol>
 <li>对序列化数据的访问不需要打包和拆包——它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而没有任何解析开销；  </li>
 <li>内存效率和速度——访问数据时的唯一内存需求就是缓冲区，不需要额外的内存分配；   </li>
@@ -197,7 +197,9 @@
 <p>更详细的java使用方法，可以参见<a href="https://google.github.io/flatbuffers/md__java_usage.html" target="_blank" rel="external">google官方文档</a>。</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博]]>
+    <![CDATA[<p>据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博客、以及其他国内的个人博客，也写了些代码做实验，以此文作为学习总结。</p>
+<h2 id="什么是Google_FlatBuffers">什么是Google FlatBuffers</h2><p>FlatBuffers是一个开源的、跨平台的、高效的、提供了C++/Java接口的序列化工具库。它是Google专门为游戏开发或其他性能敏感的应用程序需求而创建。尤其更适用于移动平台，这些平台上内存大小及带宽相比桌面系统都是受限的，而应用程序比如游戏又有更高的性能要求。它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而不需要任何解析开销。<br>]]>
+    
     </summary>
     
       <category term="Android" scheme="http://www.carrotsight.com/tags/Android/"/>
@@ -217,16 +219,15 @@
     <link href="http://www.carrotsight.com/2015/09/19/2015-9-19-Android%E7%BC%96%E7%A8%8B%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E5%AE%89%E5%85%A8%E8%A7%84%E8%8C%83.html"/>
     <id>http://www.carrotsight.com/2015/09/19/2015-9-19-Android编程要注意的安全规范.html</id>
     <published>2015-09-19T11:46:08.000Z</published>
-    <updated>2015-11-25T12:28:31.000Z</updated>
+    <updated>2015-12-03T08:08:03.000Z</updated>
     <content type="html"><![CDATA[<p>这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。</p>
 <h2 id="Android框架自身的安全性机制">Android框架自身的安全性机制</h2><ol>
 <li>Android应用程序沙盒，把每个app的数据与代码都分隔开。  </li>
 <li>对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  </li>
 <li>加密的文件系统，它能够保护丢失或被盗设备的数据。  </li>
 <li>用户能够授权权限来限制对系统和用户数据的访问。  </li>
-<li>应用程序定义的权限。</li>
-</ol>
-<h2 id="数据存储">数据存储</h2><h3 id="使用内部存储">使用内部存储</h3><ol>
+<li>应用程序定义的权限。<a id="more"></a>
+<h2 id="数据存储">数据存储</h2><h3 id="使用内部存储">使用内部存储</h3></li>
 <li>默认情况下，你在内部存储上创建的文件只能被该app本身访问。  </li>
 <li>应该尽量避免在IPC文件上使用 MODE_WORLD_WRITEABLE或MODE_WORLD_READABLE模式。如果实在需要数据共享，应该使用content provider。  </li>
 <li>对于敏感数据，应该选择一个密钥对本地文件进行加密，这个密钥应该不能直接被应用程序访问。比如，把密钥保存在KeyStore中，并且用一个不存储在该设备上的用户密码来保护它。</li>
@@ -281,7 +282,12 @@
     <summary type="html">
     <![CDATA[<p>这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。</p>
 <h2 id="Android框架自身的安全性机制">Android框架自身的安全性机制</h2><ol>
-<li>A]]>
+<li>Android应用程序沙盒，把每个app的数据与代码都分隔开。  </li>
+<li>对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  </li>
+<li>加密的文件系统，它能够保护丢失或被盗设备的数据。  </li>
+<li>用户能够授权权限来限制对系统和用户数据的访问。  </li>
+<li>应用程序定义的权限。]]>
+    
     </summary>
     
       <category term="Android" scheme="http://www.carrotsight.com/tags/Android/"/>
@@ -297,11 +303,10 @@
     <link href="http://www.carrotsight.com/2015/09/16/2015-9-16-%E3%80%8AThink-in-Java%E3%80%8B%E7%B1%BB%E5%9E%8B%E4%BF%A1%E6%81%AF-%E2%80%93-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html"/>
     <id>http://www.carrotsight.com/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html</id>
     <published>2015-09-16T08:22:16.000Z</published>
-    <updated>2015-11-25T13:01:56.000Z</updated>
+    <updated>2015-12-03T08:07:51.000Z</updated>
     <content type="html"><![CDATA[<h2 id="Class对象">Class对象</h2><p>Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。<br>每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  </p>
 <p>Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.class来获得。其中，getClass()方法属于根类Object的一部分。”.class”称为<em>类字面常量</em>，他在编译时就会受到检查，所以更安全，也更高效。  </p>
-<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。</p>
-<p>Class对象包含很多有用的方法，能够了解一个类型的所有信息，比如：  </p>
+<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。<br><a id="more"></a><br>Class对象包含很多有用的方法，能够了解一个类型的所有信息，比如：  </p>
 <ol>
 <li>getName（）：产生全限定的类名  </li>
 <li>getSimpleName（）：产生不含包名的类名  </li>
@@ -327,7 +332,9 @@
 </blockquote>
 ]]></content>
     <summary type="html">
-    <![CDATA[Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。]]>
+    <![CDATA[<h2 id="Class对象">Class对象</h2><p>Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。<br>每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  </p>
+<p>Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.class来获得。其中，getClass()方法属于根类Object的一部分。”.class”称为<em>类字面常量</em>，他在编译时就会受到检查，所以更安全，也更高效。  </p>
+<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。<br>]]>
     
     </summary>
     
@@ -352,7 +359,7 @@
 </strong></p>
 <p>本文档前面是对Otto各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
 <h2 id="特点">特点</h2><p>Otto的作用与EventBus类似，都是用于组件间通信，降低不同的类相互之间的耦合。如果不熟悉EventBus，可以先了解EventBus，下文涉及到otto与EventBus的对比。</p>
-<p>Otto可以随便定义订阅者的消息处理函数的函数名，采用注解的方式来识别生产函数和消费函数（@Produce和@Subscribe），这是与EventBus明显的不同。 </p>
+<p>Otto可以随便定义订阅者的消息处理函数的函数名，采用注解的方式来识别生产函数和消费函数（@Produce和@Subscribe），这是与EventBus明显的不同。<br><a id="more"></a></p>
 <h2 id="PUBLISHING、SUBSCRIBING与PRODUCING">PUBLISHING、SUBSCRIBING与PRODUCING</h2><p>虽然同样是订阅者模式的实现，但是Otto与Eventbus相比，多了一个“PRODUCING”的概念（Eventbus中只有PUBLISHING和SUBSCRIBING的概念）。<br>其实这里的PRODUCING设计的初衷与Eventbus中的StickyEvent是相似的，都是为了能够取到某中类型的事件的最新值，但在实现上有较大差异。</p>
 <h3 id="订阅事件">订阅事件</h3><p><strong>用来消耗（或者说处理）事件的是订阅者，必须用@Subscribe标注。</strong>  订阅者（假定是一个Activity）需要在初始化时（onCreate()方法或onResume()方法中）使用register（）方法向总线注册，在onDestroy（）或onPause（）时调用unregister（）从总线反注册。  </p>
 <h3 id="发布事件">发布事件</h3><h4 id="PUBLISHING">PUBLISHING</h4><p>而产生（或者说发布）事件的方式有两种，一种是不使用@Produce标注，这种方式被otto官方文档称为<strong>PUBLISHING</strong>，方法是直接调用bus对象的post方法，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MyApplicationUtil.bus.post(<span class="keyword">new</span> TextEvent(<span class="string">"这是PUBLISHING事件: "</span> + <span class="keyword">new</span> Date()));</span><br></pre></td></tr></table></figure>   </p>
@@ -408,7 +415,12 @@
 </ol>
 ]]></content>
     <summary type="html">
-    <![CDATA[在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下，并写demo做了些实验，发现网上很多博客对otto的生产者的@Produce解释不太准确。于是总结了这篇学习笔记。]]>
+    <![CDATA[<p>在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。</p>
+<p><strong><br>本文的Otto指的是：square/otto<br>EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。
+</strong></p>
+<p>本文档前面是对Otto各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
+<h2 id="特点">特点</h2><p>Otto的作用与EventBus类似，都是用于组件间通信，降低不同的类相互之间的耦合。如果不熟悉EventBus，可以先了解EventBus，下文涉及到otto与EventBus的对比。</p>
+<p>Otto可以随便定义订阅者的消息处理函数的函数名，采用注解的方式来识别生产函数和消费函数（@Produce和@Subscribe），这是与EventBus明显的不同。<br>]]>
     
     </summary>
     
@@ -432,7 +444,7 @@
     <updated>2015-12-02T13:07:27.000Z</updated>
     <content type="html"><![CDATA[<p>这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
 <p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
-<h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"></p>
+<h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"><br><a id="more"></a></p>
 <h2 id="特点">特点</h2><p>“事件”是一个POJO，根据自己需要自己随便定义的一个JAVA类，包含需要传递给其他组件的信息。  </p>
 <p>事件发布者不需要注册，直接使用EventBus.getDefault().post(new TextEvent(“我有一头小毛驴”))。其中TextEvent是一个自定义类。  </p>
 <p>事件订阅者（接受者、处理者）需要在onCreate()方法中通过EventBus.getDefault().register(this)注册自己，在onDestroy()方法中通过EventBus.getDefault().unregister(this)取消注册。同时，需要至少实现4种onEventXXX方法中的一种。   </p>
@@ -523,7 +535,9 @@
 ]]></content>
     <summary type="html">
     <![CDATA[<p>这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
-]]>
+<p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
+<h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"><br>]]>
+    
     </summary>
     
       <category term="Android" scheme="http://www.carrotsight.com/tags/Android/"/>
@@ -539,11 +553,10 @@
     <link href="http://www.carrotsight.com/2015/09/08/2015-9-8-%E3%80%8AThink-in-Java%E3%80%8B%E5%B9%B6%E5%8F%91-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0.html"/>
     <id>http://www.carrotsight.com/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html</id>
     <published>2015-09-08T08:08:15.000Z</published>
-    <updated>2015-11-25T13:22:46.000Z</updated>
+    <updated>2015-12-03T08:07:13.000Z</updated>
     <content type="html"><![CDATA[<p>1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  </p>
 <p>2.ExecutorService知道如何构建恰当的上下文来执行Runnable对象。  </p>
-<p>3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时停止创建新线程，因此它是合理的Executor的首选。只有当这种方式会引发问题时，才需要切换到FixedThreadPool。</p>
-<p>4.SingleThreadExecutor就像是线程数量为1的FixedThreadPool。如果向SingleThreadExecutor提交了多个任务，那么这些任务将排队，每个任务都会在下一个任务开始之前运行结束，所有的任务将使用相同的线程。SingleThreadExecutor会序列化所有提交给它的任务，并会维护它自己（隐藏）的悬挂任务队列。<br>SingleThreadExecutor确保任何时刻在任何线程中都只有唯一的任务在运行，就不需要在共享资源上处理同步。  </p>
+<p>3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时停止创建新线程，因此它是合理的Executor的首选。只有当这种方式会引发问题时，才需要切换到FixedThreadPool。<br><a id="more"></a><br>4.SingleThreadExecutor就像是线程数量为1的FixedThreadPool。如果向SingleThreadExecutor提交了多个任务，那么这些任务将排队，每个任务都会在下一个任务开始之前运行结束，所有的任务将使用相同的线程。SingleThreadExecutor会序列化所有提交给它的任务，并会维护它自己（隐藏）的悬挂任务队列。<br>SingleThreadExecutor确保任何时刻在任何线程中都只有唯一的任务在运行，就不需要在共享资源上处理同步。  </p>
 <p>5.Runnable是执行工作的独立任务，但是他不返回任何值。如果希望任务在完成时能够返回一个值，那么可以实现Callable接口而不是Runnable接口。在Java SE5中引入的Callable是一种具有类型参数的泛型，它的类型参数表示的是从方法call（）（而不是run（））中返回的值，并且必须使用ExecutorService.submit（）方法调用它。<br>测试代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TaskWithResult</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt;</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">TaskWithResult</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="annotation">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">		Thread.sleep((<span class="keyword">new</span> Random()).nextInt(<span class="number">2000</span>) + <span class="number">1000</span>);<span class="comment">//在这里随机睡眠时间，为了测试Future.isDone()的效果</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">"TaskWithResult id: "</span> + id;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CallableTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService exec = Executors.newCachedThreadPool();</span><br><span class="line">		ArrayList&lt;Future&lt;String&gt;&gt; results = <span class="keyword">new</span> ArrayList&lt;Future&lt;String&gt;&gt;();</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">			results.add(exec.submit(<span class="keyword">new</span> TaskWithResult(i)));</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span>(Future&lt;String&gt; fs : results)&#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				System.out.println(<span class="string">"\n==taskIndex "</span> + results.indexOf(fs) + <span class="string">"=="</span>);</span><br><span class="line">				System.out.println(<span class="string">"isDone(): "</span> + fs.isDone());</span><br><span class="line">				System.out.println(fs.get());</span><br><span class="line">				System.out.println(<span class="string">"isDone(): "</span> + fs.isDone());</span><br><span class="line">			&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (ExecutionException e) &#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">				exec.shutdown();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出结果为：</p>
@@ -618,7 +631,9 @@
 ]]></content>
     <summary type="html">
     <![CDATA[<p>1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  </p>
-<p>2.ExecutorService知道如何构建恰当的上下]]>
+<p>2.ExecutorService知道如何构建恰当的上下文来执行Runnable对象。  </p>
+<p>3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时停止创建新线程，因此它是合理的Executor的首选。只有当这种方式会引发问题时，才需要切换到FixedThreadPool。<br>]]>
+    
     </summary>
     
       <category term="Java" scheme="http://www.carrotsight.com/tags/Java/"/>
@@ -636,16 +651,17 @@
     <link href="http://www.carrotsight.com/2013/12/02/2013-12-2-FLEX%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E5%9B%A0%E4%B8%BAfml%E6%96%87%E4%BB%B6%E6%8D%9F%E5%9D%8F.html"/>
     <id>http://www.carrotsight.com/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html</id>
     <published>2013-12-02T05:01:15.000Z</published>
-    <updated>2015-11-25T13:38:27.000Z</updated>
+    <updated>2015-12-03T08:06:26.000Z</updated>
     <content type="html"><![CDATA[<p>在Flash Builder中，提示</p>
 <blockquote>
-<p>FLEX bug:无法启动服务，因为fml文件损坏。</p>
+<p>FLEX bug:无法启动服务，因为fml文件损坏。<br><a id="more"></a><br>具体错误提示忘了，差不多就是这句话。</p>
 </blockquote>
-<p>具体错误提示忘了，差不多就是这句话。</p>
 <p>如果遇到这种情况，把项目目录下的.model/<em>*</em>.fml文件用文本编辑器打开，删掉坏掉的服务，也就是<service>标签之间的部分，然后在回去看FLEX，就可以删掉之前的数据服务了。</service></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[在Flash Builder中，提示 FLEX bug:无法启动服务，因为fml文件损坏。]]>
+    <![CDATA[<p>在Flash Builder中，提示</p>
+<blockquote>
+<p>FLEX bug:无法启动服务，因为fml文件损坏。<br>]]>
     
     </summary>
     
@@ -658,9 +674,10 @@
     <link href="http://www.carrotsight.com/2013/04/03/2013-4-3-Flex%E4%B8%ADdatagrid%E4%B8%ADcheckbox%E7%9A%84%E5%85%A8%E9%80%89%E5%AE%9E%E7%8E%B0.html"/>
     <id>http://www.carrotsight.com/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html</id>
     <published>2013-04-03T03:44:21.000Z</published>
-    <updated>2015-11-26T01:47:51.000Z</updated>
+    <updated>2015-12-03T08:05:31.000Z</updated>
     <content type="html"><![CDATA[<p>假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：</p>
 <figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">chkChooseAll_changeHandler</span><span class="params">(event:Event)</span><span class="type">:void</span></span><br><span class="line"></span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> <span class="keyword">each</span>(<span class="keyword">var</span> item:XML <span class="keyword">in</span> adg.dataProvider)</span><br><span class="line">   &#123;</span><br><span class="line">       item.@selected = chkChooseAll.selected;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
 <p>即将表格数据源对应项的selectd属性设置为全选框的选中状态。</p>
 <p>下面主要要处理表格中chkCol列对属性改变的响应，即自动更新全选状态。方法为：<br>在itemRender中，重载data属性的set方法，如下：</p>
 <figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">set</span> <span class="title">data</span><span class="params">(value:Object)</span><span class="type">:void</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(value.@selected == <span class="string">"true"</span>)</span><br><span class="line">    &#123;</span><br><span class="line">         chkbox.selected = <span class="literal">true</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">         chkbox.selected = <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -669,7 +686,8 @@
 ]]></content>
     <summary type="html">
     <![CDATA[<p>假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1]]>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">chkChooseAll_changeHandler</span><span class="params">(event:Event)</span><span class="type">:void</span></span><br><span class="line"></span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> <span class="keyword">each</span>(<span class="keyword">var</span> item:XML <span class="keyword">in</span> adg.dataProvider)</span><br><span class="line">   &#123;</span><br><span class="line">       item.@selected = chkChooseAll.selected;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]>
+    
     </summary>
     
       <category term="Flex" scheme="http://www.carrotsight.com/categories/Flex/"/>
