@@ -652,17 +652,20 @@
     <link href="http://www.carrotsight.com/2013/12/02/2013-12-2-FLEX%E6%97%A0%E6%B3%95%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E5%9B%A0%E4%B8%BAfml%E6%96%87%E4%BB%B6%E6%8D%9F%E5%9D%8F.html"/>
     <id>http://www.carrotsight.com/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html</id>
     <published>2013-12-02T05:01:15.000Z</published>
-    <updated>2015-12-03T08:06:26.000Z</updated>
+    <updated>2015-12-03T12:00:06.000Z</updated>
     <content type="html"><![CDATA[<p>在Flash Builder中，提示</p>
 <blockquote>
-<p>FLEX bug:无法启动服务，因为fml文件损坏。<br><a id="more"></a><br>具体错误提示忘了，差不多就是这句话。</p>
+<p>FLEX bug:无法启动服务，因为fml文件损坏。</p>
 </blockquote>
+<a id="more"></a>
+<p>具体错误提示忘了，差不多就是这句话。</p>
 <p>如果遇到这种情况，把项目目录下的.model/<em>*</em>.fml文件用文本编辑器打开，删掉坏掉的服务，也就是<service>标签之间的部分，然后在回去看FLEX，就可以删掉之前的数据服务了。</service></p>
 ]]></content>
     <summary type="html">
     <![CDATA[<p>在Flash Builder中，提示</p>
 <blockquote>
-<p>FLEX bug:无法启动服务，因为fml文件损坏。<br>]]>
+<p>FLEX bug:无法启动服务，因为fml文件损坏。</p>
+</blockquote>]]>
     
     </summary>
     
