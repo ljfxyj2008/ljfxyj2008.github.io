@@ -808,7 +808,7 @@ Android应用程序沙盒，把每个app的数据与代码都分隔开。
     // Expand sidebar on post detail page by default, when post has a toc.
     motionMiddleWares.sidebar = function () {
       var $tocContent = $('.post-toc-content');
-      if (CONFIG.sidebar === 'post') {
+      if (CONFIG.sidebar === 'post' || CONFIG.sidebar === 'always') {
         if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
           displaySidebar();
         }
