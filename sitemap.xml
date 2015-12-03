@@ -2,6 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.carrotsight.com/about/index.html</loc>
+    <lastmod>2015-12-03T07:36:05.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.carrotsight.com/categories/index.html</loc>
+    <lastmod>2015-12-03T07:04:15.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.carrotsight.com/tags/index.html</loc>
+    <lastmod>2015-12-03T07:02:21.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://www.carrotsight.com/2015/09/14/2015-9-14-EventBus%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93.html</loc>
     <lastmod>2015-12-02T13:07:27.000Z</lastmod>
   </url>
