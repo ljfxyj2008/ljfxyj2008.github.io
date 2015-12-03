@@ -742,7 +742,7 @@
 
       
         
-          <p>在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。</p>
+          <p>与EventBus类似的还有otto，于是也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系讲得比较模糊，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。于是就自己写demo实验，以此文总结。</p>
 <p><strong><br>本文的Otto指的是：square/otto<br>EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。
 </strong></p>
 <p>本文档前面是对Otto各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
@@ -850,7 +850,7 @@
 
       
         
-          <p>这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
+          <p>这两天对Github上很火的Eventbus进行了学习，查阅了一些博客，写代码做了实验，以此文总结。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
 <p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
 <h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"><br>
           <div class="post-more-link text-center">

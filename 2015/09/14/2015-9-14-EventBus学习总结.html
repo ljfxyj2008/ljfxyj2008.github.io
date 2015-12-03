@@ -53,14 +53,14 @@
 
 
 
-<meta name="description" content="这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的详细使用实例部分。
-本文EventBus指的是：greenrobot/EventBusGithub上有很多同名项目，不要搞错。EventBus是使用观察者模式来替代Intent、Handler、Broadc">
+<meta name="description" content="这两天对Github上很火的Eventbus进行了学习，查阅了一些博客，写代码做了实验，以此文总结。本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的详细使用实例部分。
+本文EventBus指的是：greenrobot/EventBusGithub上有很多同名项目，不要搞错。EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EventBus学习总结">
 <meta property="og:url" content="http://www.carrotsight.com/2015/09/14/2015-9-14-EventBus学习总结.html">
 <meta property="og:site_name" content="ljfxyj2008的小站">
-<meta property="og:description" content="这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的详细使用实例部分。
-本文EventBus指的是：greenrobot/EventBusGithub上有很多同名项目，不要搞错。EventBus是使用观察者模式来替代Intent、Handler、Broadc">
+<meta property="og:description" content="这两天对Github上很火的Eventbus进行了学习，查阅了一些博客，写代码做了实验，以此文总结。本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的详细使用实例部分。
+本文EventBus指的是：greenrobot/EventBusGithub上有很多同名项目，不要搞错。EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-2/91530689.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-2/70984573.jpg">
@@ -68,8 +68,8 @@
 <meta property="og:updated_time" content="2015-12-02T13:07:27.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EventBus学习总结">
-<meta name="twitter:description" content="这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的详细使用实例部分。
-本文EventBus指的是：greenrobot/EventBusGithub上有很多同名项目，不要搞错。EventBus是使用观察者模式来替代Intent、Handler、Broadc">
+<meta name="twitter:description" content="这两天对Github上很火的Eventbus进行了学习，查阅了一些博客，写代码做了实验，以此文总结。本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的详细使用实例部分。
+本文EventBus指的是：greenrobot/EventBusGithub上有很多同名项目，不要搞错。EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在">
 
 
 
@@ -317,7 +317,7 @@
       
 
       
-        <span itemprop="articleBody"><p>这两天对Github上很火的eventbus进行了学习，查阅了一些博客，也自己写代码做了实验，写下此总结文档。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
+        <span itemprop="articleBody"><p>这两天对Github上很火的Eventbus进行了学习，查阅了一些博客，写代码做了实验，以此文总结。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
 <p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
 <h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"><br><a id="more"></a></p>
 <h2 id="特点">特点</h2><p>“事件”是一个POJO，根据自己需要自己随便定义的一个JAVA类，包含需要传递给其他组件的信息。  </p>

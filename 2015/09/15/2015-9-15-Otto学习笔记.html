@@ -53,20 +53,20 @@
 
 
 
-<meta name="description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。
-本文的Ott">
+<meta name="description" content="与EventBus类似的还有otto，于是也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系讲得比较模糊，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。于是就自己写demo实验，以此文总结。
+本文的Otto指的是：square/ottoEventB">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Otto学习笔记">
 <meta property="og:url" content="http://www.carrotsight.com/2015/09/15/2015-9-15-Otto学习笔记.html">
 <meta property="og:site_name" content="ljfxyj2008的小站">
-<meta property="og:description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。
-本文的Ott">
+<meta property="og:description" content="与EventBus类似的还有otto，于是也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系讲得比较模糊，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。于是就自己写demo实验，以此文总结。
+本文的Otto指的是：square/ottoEventB">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/24002070.jpg">
 <meta property="og:updated_time" content="2015-12-02T04:19:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Otto学习笔记">
-<meta name="twitter:description" content="在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。
-本文的Ott">
+<meta name="twitter:description" content="与EventBus类似的还有otto，于是也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系讲得比较模糊，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。于是就自己写demo实验，以此文总结。
+本文的Otto指的是：square/ottoEventB">
 
 
 
@@ -314,7 +314,7 @@
       
 
       
-        <span itemprop="articleBody"><p>在学习完EventBus后，发现与之类似的事件库还有otto，于是我也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译而已，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系没有深入解释，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。所以就自己写demo做了些实验，总结了这篇学习笔记。</p>
+        <span itemprop="articleBody"><p>与EventBus类似的还有otto，于是也学习了一下。在网上找到的大部分博客其实都是对otto官方文档的中文翻译，对生产者的@Produce、PUBLISHING、PRODUCING之间的关系讲得比较模糊，也没有对EventBus的StickyEvnet与Otto中类似机制的对比，而这正是我想了解的。于是就自己写demo实验，以此文总结。</p>
 <p><strong><br>本文的Otto指的是：square/otto<br>EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。
 </strong></p>
 <p>本文档前面是对Otto各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
@@ -328,6 +328,7 @@
 <p>Otto没有EventBus中那种可以在任意地方获取StickyEvent的方法，因为虽然PRODUCING与StickyEvent类似，但<strong>Eventbus是通过一个map来缓存StickyEvent的最后一次更新值，不会触发任何函数回调，而Otto的PRODUCING并没有这种缓存，是实时去回调Produce函数来拿到最新值的</strong>。</p>
 <p>PRODUCING的定义如下面代码所示：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Produce</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> TextEvent <span class="title">postEvent</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> TextEvent(<span class="string">"hahaah"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里仅仅是为了实验调试是不是每个订阅者都触发这个回调，所以才写成每次return的都是new出来的新对象。事实上，Otto的文档中说@Produce机制是为了便于多个订阅者能全都某个事件的最新状态，比如最后一次定位的位置。所以，要实现官方文档中说的这一点，就不能在@Produce函数中每次return新对象，而是return一个外部的全局对象（event），这个对象在外围被其他逻辑更新，而不是不在@Produce函数中被更新。</p>
 <p>在一个总线上（一个bus对象）上，同一时刻同一类型的用@Produce标注的事件生产者只能有一个。官方文档的原文是：</p>
 <blockquote>
 <p><strong>You may only have one producer per event type registered at a time on a bus.  </strong></p>
