@@ -59,7 +59,7 @@
 <meta property="og:url" content="http://www.carrotsight.com/2015/11/13/一个android日志库的实现.html">
 <meta property="og:site_name" content="ljfxyj2008的小站">
 <meta property="og:description" content="调研在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
-<meta property="og:updated_time" content="2015-12-03T08:08:34.000Z">
+<meta property="og:updated_time" content="2015-12-04T10:45:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一个android日志库的实现">
 <meta name="twitter:description" content="调研在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。">
@@ -364,7 +364,7 @@
 <p>后来大神review了我的代码，说最好不要用AIDL，因为那样会一直在app和servcie之间保持一个长连接，没有必要。可以直接用start方法启动servcie，用intent来传递请求参数，也是一样的。再加上我写的第一版是以log4j的形式，虽然提供了gradle的参数配置日志库的各项功能，但是功能是写死的，无法扩展，如果用户有一些个性化的日志需求就没法用我这个东西。</p>
 <p>所以后来就对代码进行了重构，改为在JakeWharton/timber之上扩展，我提供一个日志框架，以及两个日志工具（打印到控制台、打印到文件），用户也可以继承我的日志工具基类实现自己的日志工具。用户在自己的app中，根据业务需求，在初始化时选择一个或多个日志工具安装到框架，具体的打印请求也是同android默认日志工具一样直接.d()、.e()这样调用，很方便。</p>
 <p>这里记一下踩到的另外几个坑，有些比较低级😓：<br>1、一开始之所以选择在orhanobut/logger上扩展，是因为它默认提供了非常美观的打印格式，以及线程信息、日志调用栈信息。后来突然反应过来，我提供的库虽然会与用户app打进同一个apk，wrapper也是与用户app跑在同一线程，但是真正的日志打印工作是在service的单独进程中完成的，那么它默认提供的调用栈信息就无意义了。  </p>
-<p>2、ADIL是同步调用，而service的所有其它接口（bind, unbind, startService, stopService）都是异步接口，立即返回。参考：<a href="http://blog.csdn.net/edisonlg/article/details/7164761）。" target="_blank" rel="external">http://blog.csdn.net/edisonlg/article/details/7164761）。</a>  </p>
+<p>2、AIDL是同步调用，而service的所有其它接口（bind, unbind, startService, stopService）都是异步接口，立即返回。参考：<a href="http://blog.csdn.net/edisonlg/article/details/7164761）。" target="_blank" rel="external">http://blog.csdn.net/edisonlg/article/details/7164761）。</a>  </p>
 <p>3、在调试时发现初始化貌似很耗时，跟踪了一下，发现new FileHandler()这一操作居然要耗时30~40ms!!!</p>
 </span>
       
