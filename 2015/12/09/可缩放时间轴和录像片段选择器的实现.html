@@ -1,0 +1,829 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,时间轴," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ljfxyj2008的小站" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="最近的工作是做了两个自定义控件：①可以缩放的时间轴 ②吸附在在时间轴上有两个滑动按钮的录像片段选择器。真机测试效果如下面的gif动画所示：
+在此记录一下设计原理和踩过的坑。
+时间轴时间轴分为两部分轴，刻度轴和录像片段轴。刻度轴用来绘制时间刻度表盘，录像片段轴用来指示对应位置有没有录像存在。时间轴的视觉效果如下：
+其中下面有时间标注的刻度部分是刻度轴，上面灰色背景一段一段绿色的部分是录像片段轴，如下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="可缩放时间轴和录像片段选择器的实现">
+<meta property="og:url" content="http://www.carrotsight.com/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">
+<meta property="og:site_name" content="ljfxyj2008的小站">
+<meta property="og:description" content="最近的工作是做了两个自定义控件：①可以缩放的时间轴 ②吸附在在时间轴上有两个滑动按钮的录像片段选择器。真机测试效果如下面的gif动画所示：
+在此记录一下设计原理和踩过的坑。
+时间轴时间轴分为两部分轴，刻度轴和录像片段轴。刻度轴用来绘制时间刻度表盘，录像片段轴用来指示对应位置有没有录像存在。时间轴的视觉效果如下：
+其中下面有时间标注的刻度部分是刻度轴，上面灰色背景一段一段绿色的部分是录像片段轴，如下">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/74682253.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/11028878.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/86365109.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/12666172.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/53994347.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/78534287.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/73909141.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/52392486.jpg">
+<meta property="og:updated_time" content="2015-12-10T07:25:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="可缩放时间轴和录像片段选择器的实现">
+<meta name="twitter:description" content="最近的工作是做了两个自定义控件：①可以缩放的时间轴 ②吸附在在时间轴上有两个滑动按钮的录像片段选择器。真机测试效果如下面的gif动画所示：
+在此记录一下设计原理和踩过的坑。
+时间轴时间轴分为两部分轴，刻度轴和录像片段轴。刻度轴用来绘制时间刻度表盘，录像片段轴用来指示对应位置有没有录像存在。时间轴的视觉效果如下：
+其中下面有时间标注的刻度部分是刻度轴，上面灰色背景一段一段绿色的部分是录像片段轴，如下">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'always',
+    motion: true
+  };
+</script>
+
+  <title> 可缩放时间轴和录像片段选择器的实现 | ljfxyj2008的小站 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?449259d6f926d9e469b862f243275e59";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">ljfxyj2008的小站</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">记录点滴，不忘初心</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-memo">
+          <a href="/memo" rel="section">
+            
+              <i class="menu-item-icon fa fa-question-circle fa-fw"></i> <br />
+            
+            备忘
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'dMqdYr62RGqqfwhQNdbT','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                可缩放时间轴和录像片段选择器的实现
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2015-12-09T14:53:40+08:00" content="2015-12-09">
+              2015-12-09
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2015/12/09/可缩放时间轴和录像片段选择器的实现.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>最近的工作是做了两个自定义控件：①可以缩放的时间轴 ②吸附在在时间轴上有两个滑动按钮的录像片段选择器。<br>真机测试效果如下面的gif动画所示：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/74682253.jpg" alt=""></p>
+<p>在此记录一下设计原理和踩过的坑。</p>
+<h2 id="时间轴">时间轴</h2><p>时间轴分为两部分轴，刻度轴和录像片段轴。刻度轴用来绘制时间刻度表盘，录像片段轴用来指示对应位置有没有录像存在。<br>时间轴的视觉效果如下：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/11028878.jpg" alt=""></p>
+<p>其中下面有时间标注的刻度部分是刻度轴，上面灰色背景一段一段绿色的部分是录像片段轴，如下图的标注所示：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/86365109.jpg" alt=""></p>
+<a id="more"></a>
+<h3 id="刻度轴">刻度轴</h3><p>刻度轴的起始时间点、终止时间点、跨越长度、当前滑动到的时间点（即屏幕中间的游标指示的时间）都可以根据传入参数定制。刻度分为大刻度（关键刻度）和小刻度，大刻度要显示刻度和对应的时间文字，小刻度只显示刻度。刻度分为6档，根据缩放级别的不同（用户双指缩放或界面按钮缩放），把刻度打到不同位置。<br>比如，刚进入界面时刻度轴的刻度以默认档位显示，要在如图的位置打出刻度：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/12666172.jpg" alt="刻度轴1"></p>
+<p>当用户双指在屏幕上拉伸，或点击放大按钮，导致时间轴被放大时，一开始刻度打印方式不变（依然在这几个时刻打印文字），只是刻度间的距离随手指的拉伸距离而逐渐变大。当刻度间距离达到一定程度时，刻度打印方式改变，变成如下图的刻度样式：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/53994347.jpg" alt="刻度轴2"></p>
+<p>当用户双指在屏幕上收缩，或点击缩小按钮，导致时间轴被缩小时，一开始刻度打印方式不变（依然在这几个时刻打印文字），只是刻度间的距离随手指的收缩距离而逐渐变小。当刻度间距离小到一定程度时，刻度打印方式改变，变成如下图的刻度样式：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/78534287.jpg" alt="刻度轴3"></p>
+<p>我的实现方式是，通过继承view实现一个自定义view，在onMeasure（）阶段把view宽度设置成所有刻度都绘制出来会占用的长度，即包括超出屏幕的实际长度。由于游标实际是不移动的，游标指示时间的改变是通过刻度轴的反向滑动来实现的，所以为了在时间轴滑动到尽头时游标能够指示到刻度轴尽头的时间，还需要在用户指定的长度基础上，在刻度轴的最左端和最右端分别额外增加屏幕一半宽度的空白区。原理图如下：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/73909141.jpg" alt=""></p>
+<h4 id="刻度档位信息">刻度档位信息</h4><p>由于刻度轴根据缩放级别的不同，有6档不同的刻度显示方式（上面展示了3种），所以先把6档刻度信息写进map缓存，map中的每一个item记录这档刻度以下信息：</p>
+<ul>
+<li>一屏幕总共要显示的秒数（即可见区域包含的秒数）</li>
+<li>大刻度对应的秒数</li>
+<li>小刻度对应的秒数</li>
+<li>关键刻度文字的显示模式（DataFormat的pattern）</li>
+</ul>
+<p>比如刻度轴1对应的这几个值就是6 <em> 60 </em> 60（一屏幕总共显示6个小时长度）、60 <em> 60（大刻度对应的都是整小时，即60 </em> 60的整数倍）、5 * 60（小刻度对应的都是5分钟的整数倍）、”HH:mm”（时间文字显示小时和分钟）。</p>
+<p>然后，利用手机屏幕宽度screenWidth、用户指定的刻度轴总长度WHOLE_TIMEBAR_TOTAL_SECONDS、以及刚刚在map中设定的一屏幕总共要显示的秒数totalSecondsInOneScreen，就可以计算出某个刻度档位的时间轴总长度（像素）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">viewLength = (<span class="keyword">int</span>) ((<span class="keyword">float</span>) screenWidth * WHOLE_TIMEBAR_TOTAL_SECONDS / (<span class="keyword">float</span>) totalSecondsInOneScreen);</span><br></pre></td></tr></table></figure><br>把算出的这个viewLength也缓存到map的对应item中，作为某一档的默认view宽度。</p>
+<h4 id="view宽度设定">view宽度设定</h4><p>在view第一次被初始化时，我们默认把刻度轴的样式设定在第3档的刻度样式，那么就从map中取出对应的刻度档位信息的时间轴总长度字段viewLength，然后通过为view指定新的LayoutParams来指定时间轴view控件的宽度，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ViewGroup.LayoutParams params = getLayoutParams();</span><br><span class="line">params.width = viewLength;</span><br><span class="line">setLayoutParams(params);</span><br></pre></td></tr></table></figure></p>
+<p>这样仅仅是把view宽度指定为有刻度的部分的总长度。为了加上view两端无刻度的留白部分，我们要在onMeasure方法中做一些手脚：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onMeasure</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec, <span class="keyword">int</span> heightMeasureSpec)</span> </span>&#123;       </span><br><span class="line">       setMeasuredDimension(measureWidth(widthMeasureSpec), VIEW_HEIGHT);</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="comment">/**</span><br><span class="line">    * 计算时间轴的宽度，左右都预留半个屏幕的宽度    </span><br><span class="line">    */</span></span><br><span class="line">   <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">measureWidth</span><span class="params">(<span class="keyword">int</span> widthMeasureSpec)</span> </span>&#123;</span><br><span class="line">       <span class="keyword">int</span> measureMode = MeasureSpec.getMode(widthMeasureSpec);</span><br><span class="line">       <span class="keyword">int</span> measureSize = MeasureSpec.getSize(widthMeasureSpec);</span><br><span class="line">       <span class="keyword">int</span> result = getSuggestedMinimumWidth();</span><br><span class="line">       <span class="keyword">switch</span> (measureMode) &#123;</span><br><span class="line">           <span class="keyword">case</span> MeasureSpec.AT_MOST:</span><br><span class="line">           <span class="keyword">case</span> MeasureSpec.EXACTLY:</span><br><span class="line">               result = measureSize + screenWidth;</span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line">           <span class="keyword">default</span>:</span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> result;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure><br>这样的话，手机在测量view尺寸的时候就会把多出来的一个屏幕的宽度也算进去。</p>
+<h4 id="画刻度onDraw()">画刻度onDraw()</h4><p>刻度怎么画是刻度轴实现的关键。思路是，我们在onDraw（）中只绘制出屏幕上可见的那一部分，每次用户滑动或缩放时间轴，都通过invalidate()来重新回调onDraw（）方法。  那么关键问题就是如何确定屏幕可见部分在view中的起始点、终止点分别是第几个像素。  </p>
+<p>不管时间轴view被用户缩放到了什么长度，它的总长度我们总是知道的（因为之所以能看到缩放效果，就是我们手动利用缩放指数factor计算新的长度，然后在onMeasure中重新手动赋值，后面会讲到），同时整个时间轴的跨度有多少秒我们也是知道的（用户需要通过参数指定view的起点、终点时间，类型为long），那么我们就可以计算出一秒钟对应多少个像素：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pixelsPerSecond = (<span class="keyword">float</span>) (getWidth() - screenWidth) / (<span class="keyword">float</span>) WHOLE_TIMEBAR_TOTAL_SECONDS;</span><br></pre></td></tr></table></figure></p>
+<p>由于用户在初始化时还指定了希望游标指示在哪个时刻上currentTimeInMillisecond，同时我们再利用这一档刻度标准规定的最小刻度间的时间间隔minTickInSecond（在第一部初始化map时指定），我们就可以求出屏幕可见区域最左端、最右端对应的是时间轴上的哪个时刻：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">long</span> forStartUTC = (<span class="keyword">long</span>) (currentTimeInMillisecond / <span class="number">1000</span> - screenWidth / pixelsPerSecond / <span class="number">2</span> - minTickInSecond);</span><br><span class="line"><span class="keyword">long</span> endStartUTC = (<span class="keyword">long</span>) (currentTimeInMillisecond / <span class="number">1000</span> + screenWidth / pixelsPerSecond / <span class="number">2</span> + minTickInSecond);</span><br></pre></td></tr></table></figure></p>
+<p>虽然我们知道了屏幕两端对应的时刻，但由于这个时刻很可能是不能被最小刻度间距minTickInSecond整除的，比如我们的最小刻度是5秒一档，但是当前最左端是12：05：02，那么这个地方就不应该打刻度，而应该继续往后早到第一个能被minTickInSecond整除的位置。  </p>
+<p>这里就有一个大坑。如果直接去用求模运算（%）找第一个刻度点，就会导致手机调整不同时区时，刻度被打在不同位置上的问题，比如我希望00：00、06：00、12：00、18：00才作为关键刻度打印时间文字，但是手机时区跳到北京时间（UTC+8)时，刻度会被打在08：00、14：00、20：00、02：00这几个位置上。更糟糕的是，当缩放到关键刻度只打印年月日而不打印时间的级别时，看起来游标指在2015-12-09的位置上，用户会以为这是北京时间2015-12-09 00：00：00，而实际他指向的是北京时间2015-12-09 08：00：00。  </p>
+<p>要解决这个问题，就要在找刻度、画刻度的时候考虑手机设定时区与UTC的时差，用UTC时间加上时差的结果来计算刻度的位置，但是时间轴上每个点代表的时间仍然是UTC时间，打印关键刻度文字传给DataFormatter的参数也仍然是UTC时间，因为DataFormat我们在默认不指定时区的情况下就是把UTC时间转成手机设定的本地时区时间来显示的。找屏幕要画出的第一个刻度的代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">       *找出当前屏幕要画出的第一个刻度对应的时刻</span><br><span class="line">       */</span></span><br><span class="line">      Calendar cal = Calendar.getInstance();</span><br><span class="line">      <span class="keyword">int</span> zoneOffsetInSeconds = cal.get(java.util.Calendar.ZONE_OFFSET) / <span class="number">1000</span>;<span class="comment">//手机本地时区与UTC相差的毫秒数</span></span><br><span class="line"></span><br><span class="line">      <span class="keyword">long</span> forStartUTC = (<span class="keyword">long</span>) (currentTimeInMillisecond / <span class="number">1000</span> - screenWidth / pixelsPerSecond / <span class="number">2</span> - timebarTickCriterionMap.get(currentTimebarTickCriterionIndex).minTickInSecond);</span><br><span class="line">      <span class="keyword">long</span> endStartUTC = (<span class="keyword">long</span>) (currentTimeInMillisecond / <span class="number">1000</span> + screenWidth / pixelsPerSecond / <span class="number">2</span> + timebarTickCriterionMap.get(currentTimebarTickCriterionIndex).minTickInSecond);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">long</span> forStartLocalTimezone = forStartUTC + zoneOffsetInSeconds;</span><br><span class="line">      <span class="keyword">long</span> endStartLocalTimezone = endStartUTC + zoneOffsetInSeconds;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">long</span> firstTickToSeeInSecondUTC = -<span class="number">1</span>;<span class="comment">//屏幕上能看到的最左边一个刻度对应的时间,单位是秒</span></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">long</span> i = forStartLocalTimezone; i &lt;= endStartLocalTimezone; i++) &#123;</span><br><span class="line">          <span class="keyword">if</span> (i % timebarTickCriterionMap.get(currentTimebarTickCriterionIndex).minTickInSecond == <span class="number">0</span>) &#123;</span><br><span class="line">              firstTickToSeeInSecondUTC = i - zoneOffsetInSeconds;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>timebarTickCriterionMap.get(currentTimebarTickCriterionIndex).minTickInSecond</code>就是用来取到当前刻度档位的最小刻度时间间距。<br>这里为了避免最边缘的第一个和最后一个刻度绘制不出来，所以在forStartUTC和endStartUTC里都多给了一个最小刻度的余量，也就是代码第7行和第8行最后加减的一个最小刻度间距minTickInSecond。<br>这样，我们就找到了在本次onDraw（）时，我们需要从view的第几个像素开始画刻度（view最左端的位置为第0个像素，大部分之间可能在屏幕之外很远的地方）。</p>
+<p>然后从firstTickToSeeInSecondUTC的位置开始，以minTickInSecond为步进值，找每一个时刻，把每一个刻度也加上本地与UTC的时差，然后去对关键刻度间距keyTickInSecond和小刻度间距minTickInSecond分别求模运算（%），能被keyTickInSecond整除的就是关键刻度，只能被minTickInSecond整除的就是小刻度。如此，再调用canvas.drawRect()、canvas.drawText(）分别画刻度和文字。</p>
+<h4 id="双指缩放">双指缩放</h4><p>用户在触摸屏上双指缩放或点击放大、缩小按钮时，时间轴要产生缩放效果，原理很简单，就是拿缩放比例scaleFactor乘以当前整个个view宽度（不含一屏幕的空白区）最为新的宽度，然后拿这个宽度和每一档刻度标准中view整体长度字段进行比较，在合适的位置进行档位切换，或者在算出view宽度过大或过小时进行限制。总之，就是算出一个新的view宽度值，然后重设view的LayoutParams，onMeasure（）和onDraw（），就可以看到缩放效果了。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">   * 按照比例对时间轴进行缩放</span><br><span class="line">   * <span class="doctag">@param</span> scaleFactor 缩放比例</span><br><span class="line">   */</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">scaleTimebarByFactor</span><span class="params">(<span class="keyword">float</span> scaleFactor)</span></span>&#123;</span><br><span class="line">      <span class="keyword">int</span> newWidth = (<span class="keyword">int</span>) ((getWidth() - screenWidth) * scaleFactor);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (newWidth &gt; timebarTickCriterionMap.get(<span class="number">0</span>).viewLength) &#123;</span><br><span class="line">          setCurrentTimebarTickCriterionIndex(<span class="number">0</span>);</span><br><span class="line">          newWidth = timebarTickCriterionMap.get(<span class="number">0</span>).viewLength;</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (newWidth &lt; timebarTickCriterionMap.get(<span class="number">0</span>).viewLength</span><br><span class="line">              &amp;&amp; newWidth &gt;= getAverageWidthForTwoCriterion(<span class="number">0</span>, <span class="number">1</span>)) &#123;</span><br><span class="line">          setCurrentTimebarTickCriterionIndex(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (newWidth &lt; getAverageWidthForTwoCriterion(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">              &amp;&amp; newWidth &gt;= getAverageWidthForTwoCriterion(<span class="number">1</span>, <span class="number">2</span>)) &#123;</span><br><span class="line">          setCurrentTimebarTickCriterionIndex(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (newWidth &lt; getAverageWidthForTwoCriterion(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">              &amp;&amp; newWidth &gt;= getAverageWidthForTwoCriterion(<span class="number">2</span>, <span class="number">3</span>)) &#123;</span><br><span class="line">          setCurrentTimebarTickCriterionIndex(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (newWidth &lt; getAverageWidthForTwoCriterion(<span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">              &amp;&amp; newWidth &gt;= getAverageWidthForTwoCriterion(<span class="number">3</span>, <span class="number">4</span>)) &#123;</span><br><span class="line">          setCurrentTimebarTickCriterionIndex(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (newWidth &lt; getAverageWidthForTwoCriterion(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">              &amp;&amp; newWidth &gt;= timebarTickCriterionMap.get(<span class="number">4</span>).viewLength) &#123;</span><br><span class="line">          setCurrentTimebarTickCriterionIndex(<span class="number">4</span>);</span><br><span class="line"></span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (newWidth &lt; timebarTickCriterionMap.get(<span class="number">4</span>).viewLength) &#123;</span><br><span class="line">          setCurrentTimebarTickCriterionIndex(<span class="number">4</span>);</span><br><span class="line">          newWidth = timebarTickCriterionMap.get(<span class="number">4</span>).viewLength;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      ViewGroup.LayoutParams params = getLayoutParams();</span><br><span class="line">      params.width = newWidth;</span><br><span class="line">      setLayoutParams(params);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="录像片段轴">录像片段轴</h3><p>录像片段轴的绘制原理很简单，就是拿到一个List数据源，其中的每一个item都有录像片段的开始时间from、结束之间end，我们就通过换算，得到每个片段对应的开始像素位置、结束像素位置，然后在屏幕的对应位置用canvas.drawRect()画框就行了。<br>但是考虑到效率问题，如果录像片段数据很多，达到数千甚至数万段（比如很多都是短视频），那么一次性全部绘制出来是不现实的，还是只能绘制屏幕可见部分，然后在时间轴被缩放时，录像片段轴随之缩放，回调onDraw（）方法，再次重绘屏幕可见区域。<br>问题就来了，在保证List中数据片段不重叠（即每一段的from到to与另一段的from到to都无交集）且有序排列的情况下（前一段的to小于后一段的from），如何快速找到哪一个item才是第一个应该被绘制出来的item？遍历list的方法显然太耗时，每次onDraw（）都去遍历一遍的话，界面在滑动或缩放时会卡顿得无法接受。  </p>
+<p>我的解决办法如下：<br><strong>步骤一</strong>：在外界向view设置录像片段轴的数据源List后，用我自己的类CloudRecordExistTimeClips来记录录像片段item信息，其中包括from、to的long值，还包括一个List字段<code>coverDateZeroOClockList</code>用来记录这个item跨越了哪几天，也就是<br>从startTimeInMillisecond到endTimeInMillisecond所涵盖的所有日期的00：00所对应的毫秒数。比如从2015-11-26 10:10:30到2015-11-29 19：12：55，那么coverDateZeroOClockList就记录“2015-11-26 00：00：00”、“2015-11-27 00：00：00”、“2015-11-28 00：00：00”、“2015-11-29 00：00：00”。具体实现方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">CloudRecordExistTimeClips</span> </span>&#123;</span><br><span class="line">       <span class="keyword">static</span> <span class="keyword">long</span> mostLeftDayZeroTime = Long.MAX_VALUE;<span class="comment">//所有时间片段最早的开始日期对应的00：00的毫秒数</span></span><br><span class="line">       <span class="keyword">static</span> <span class="keyword">long</span> mostRightDayZeroTime = -<span class="number">1</span>;<span class="comment">//所有时间片段最晚的开始日期对应的00：00的毫秒数</span></span><br><span class="line"></span><br><span class="line">       <span class="keyword">private</span> <span class="keyword">long</span> startTimeInMillisecond;</span><br><span class="line">       <span class="keyword">private</span> <span class="keyword">long</span> endTimeInMillisecond;</span><br><span class="line"></span><br><span class="line">       <span class="comment">/**</span><br><span class="line">        * 从startTimeInMillisecond到endTimeInMillisecond所涵盖的所有日期的00：00所对应的毫秒数。</span><br><span class="line">        * 如从2015-11-26 10:10:30到2015-11-29 19：12：55，</span><br><span class="line">        * 那么coverDateZeroOClockList就记录“2015-11-26 00：00：00”、“2015-11-27 00：00：00”、“2015-11-28 00：00：00”、“2015-11-29 00：00：00”</span><br><span class="line">        */</span></span><br><span class="line">       <span class="keyword">private</span> List&lt;Long&gt; coverDateZeroOClockList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="title">CloudRecordExistTimeClips</span><span class="params">(<span class="keyword">long</span> startTimeInMillisecond, <span class="keyword">long</span> endTimeInMillisecond)</span> </span>&#123;</span><br><span class="line">           <span class="keyword">this</span>.startTimeInMillisecond = startTimeInMillisecond;</span><br><span class="line">           <span class="keyword">this</span>.endTimeInMillisecond = endTimeInMillisecond;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">if</span> (startTimeInMillisecond &lt; mostLeftDayZeroTime)&#123;</span><br><span class="line">               <span class="keyword">this</span>.mostLeftDayZeroTime = startTimeInMillisecond;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">if</span> (endTimeInMillisecond &gt; mostRightDayZeroTime)&#123;</span><br><span class="line">               <span class="keyword">this</span>.mostRightDayZeroTime = endTimeInMillisecond;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           SimpleDateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line">           SimpleDateFormat zeroTimeFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd HH:mm:ss"</span>);</span><br><span class="line"></span><br><span class="line">           String startTimeDateString = dateFormat.format(startTimeInMillisecond);</span><br><span class="line">           String startTimeZeroTimeString = startTimeDateString + <span class="string">" 00:00:00"</span>;</span><br><span class="line"></span><br><span class="line">           String endTimeDateString = dateFormat.format(endTimeInMillisecond);</span><br><span class="line">           String endTimeZeroTimeString = endTimeDateString + <span class="string">" 00:00:00"</span>;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">try</span> &#123;</span><br><span class="line">               Date startTimeZeroDate = zeroTimeFormat.parse(startTimeZeroTimeString);</span><br><span class="line">               Date endTimeZeroDate = zeroTimeFormat.parse(endTimeZeroTimeString);</span><br><span class="line"></span><br><span class="line">               <span class="keyword">long</span> loopZeroDateInMilliseconds = startTimeZeroDate.getTime();</span><br><span class="line">               <span class="keyword">while</span> (loopZeroDateInMilliseconds &lt;= endTimeZeroDate.getTime())&#123;</span><br><span class="line">                   coverDateZeroOClockList.add(loopZeroDateInMilliseconds);</span><br><span class="line">                   loopZeroDateInMilliseconds = loopZeroDateInMilliseconds + SECONDS_PER_DAY * <span class="number">1000</span>;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">               e.printStackTrace();</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getStartTimeInMillisecond</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> startTimeInMillisecond;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">getEndTimeInMillisecond</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> endTimeInMillisecond;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="function"><span class="keyword">public</span> List&lt;Long&gt; <span class="title">getCoverDateZeroOClockList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">           <span class="keyword">return</span> coverDateZeroOClockList;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>步骤二</strong>：根据每个录像片段对象CloudRecordExistTimeClips覆盖的日期，将每一个item缓存在一个全局Map中，map的key是某个日期00：00：00对应的long，value就是这个片段CloudRecordExistTimeClips对象。比如，一个片段的from是<code>2015-12-08 11:32:22</code>，to值是<code>2015-12-10 11:32:22</code>，那么这个对象就同时处在key为<code>2015-12-08 00:00:00</code>、<code>2015-12-09 00:00:00</code>、<code>2015-12-10 00:00:00</code>的map槽中。</p>
+<p><strong>步骤三</strong>：在onDraw（）方法中，我们知道屏幕可见区域左边缘与view的交点对应的时间轴UTC时间（比如<code>2015-12-09 15:30:12</code>），那么我们就以当天0点的时间（即例子的<code>2015-12-09 00：00：00</code>）为key去取出当天第一个片段，从这个片段画起。如果这个key对应的values为null，那么就把key的值往后加一天，继续找，找到找到第一个片段开始画；或者key的时间大于屏幕右边缘的时间还没找到就停止寻找，因为说明屏幕可见区域中没有需要绘制的录像片段。</p>
+<h3 id="滑动与缩放">滑动与缩放</h3><p>缩放事件毫无疑问直接使用android提供的缩放手势探测器ScaleGestureDetector来检测，直接可以拿到缩放比例参数scaleFactor，然后用上面提到的缩放函数来处理。<br>滑动可以在<code>onTouchEvent（MotionEvent event）</code>中自己处理ACTION_DOWN、ACTION_MOVE、ACTION_UP事件流，也可以直接使用android提供的手势探测器GestureDetector来处理，拿到滑动的距离deltaX，在原来view的layout位置的基础上计算滑动后应该处于的位置，然后调用layout(left, top, right, top + getHeight())来使view滑动，最后调用invalidate()来发起重绘。</p>
+<p><strong>这里踩到一个坑</strong>：<br>ScaleGestureDetector和GestureDetector都要在<code>onTouchEvent（MotionEvent event）</code>函数的最前面通过截获event来进行手势处理。如果是一个缩放事件，ScaleGestureDetector已经处理了缩放手势，那么ACTION_DOWN、ACTION_MOVE、ACTION_UP以及其他事件流就不应该再继续在onTouchEvent（）后面的ACTION_DOWN、ACTION_MOVE、ACTION_UP等分支中处理了，按照android文档说明，我使用<code>scaleGestureDetector.onTouchEvent(event)</code>的返回值来判断这个event是不是已近被处理过的缩放事件，如果是就直接return不再走后面的流程。<br>结果证明我很傻很天真，时间轴在被我双指缩放时同时也出现了意外的位移，说明scaleGestureDetector.onTouchEvent(event)的返回值是无效的。<br>google之后发现，很多开发者都遇到了同样的问题，说这应该是android sdk的一个bug，scaleGestureDetector.onTouchEvent(event)永远只会返回false。所以，在这里要先通过<code>scaleGestureDetector.onTouchEvent(event)</code>调用缩放手势探测器，然后用<code>scaleGestureDetector.isInProgress()</code>来判断本次事件是否被作为缩放手势处理了，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onTouchEvent</span><span class="params">(MotionEvent event)</span> </span>&#123; </span><br><span class="line">       scaleGestureDetector.onTouchEvent(event);</span><br><span class="line">       <span class="keyword">if</span> (scaleGestureDetector.isInProgress()) &#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">switch</span> (event.getAction() &amp; MotionEvent.ACTION_MASK) &#123;</span><br><span class="line">           <span class="keyword">case</span> MotionEvent.ACTION_DOWN:</span><br><span class="line">               ...</span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line">          </span><br><span class="line">           <span class="keyword">case</span> MotionEvent.ACTION_MOVE:</span><br><span class="line">               ...</span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">           <span class="keyword">case</span> MotionEvent.ACTION_UP:</span><br><span class="line">              	...</span><br><span class="line">               <span class="keyword">break</span>;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="录像片段选择器">录像片段选择器</h2><p>通过两个滑动按钮来选择录像片段，两个滑动按钮之间的部分表示被选中的片段，两个滑动按钮上要显示对应的录像截图、时间文字提示，在滑动时、静止时根据获取成功与否显示不同的占位图。由于录像片段选择器上的时间信息是依附于时间轴控件的，所以当时间轴被滑动、缩放时，录像片段选择器也要同步更新。</p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/52392486.jpg" alt=""></p>
+<p>很明显，这个控件简化一下就是有两个thumb的seekbar，所以就取github上找了一下两个按钮的seekbar控件，结果找到了<a href="https://github.com/yahoo/android-range-seek-bar" target="_blank" rel="external">anothem/android-range-seek-bar项目</a>，它提供与android的seekbar视觉效果类似的双按钮seekbar控件。<br>我的改造工作主要就是重写onMeasure()、onLayout()、onDraw()、onTouchEvent()方法，最麻烦的就是onDraw（）中绘制时对绝对坐标的计算。其计算方法与时间轴类似，甚至还简单许多，这里就不再重复写了。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/时间轴/" rel="tag">#时间轴</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/11/13/一个android日志库的实现.html" rel="next" title="一个android日志库的实现">
+                <i class="fa fa-chevron-left"></i> 一个android日志库的实现
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2015/12/09/可缩放时间轴和录像片段选择器的实现.html"
+           data-title="可缩放时间轴和录像片段选择器的实现" data-url="http://www.carrotsight.com/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/icon_leehom.jpg" alt="ljfxyj2008" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">ljfxyj2008</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">记录点滴，不忘初心</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ljfxyj2008" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> facebook
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/u/1743025334" target="_blank">
+                  
+                    <i class="fa fa-weibo"></i> Weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#时间轴"><span class="nav-number">1.</span> <span class="nav-text">时间轴</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#刻度轴"><span class="nav-number">1.1.</span> <span class="nav-text">刻度轴</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#刻度档位信息"><span class="nav-number">1.1.1.</span> <span class="nav-text">刻度档位信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#view宽度设定"><span class="nav-number">1.1.2.</span> <span class="nav-text">view宽度设定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#画刻度onDraw()"><span class="nav-number">1.1.3.</span> <span class="nav-text">画刻度onDraw()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#双指缩放"><span class="nav-number">1.1.4.</span> <span class="nav-text">双指缩放</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#录像片段轴"><span class="nav-number">1.2.</span> <span class="nav-text">录像片段轴</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#滑动与缩放"><span class="nav-number">1.3.</span> <span class="nav-text">滑动与缩放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#录像片段选择器"><span class="nav-number">2.</span> <span class="nav-text">录像片段选择器</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2015</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ljfxyj2008</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"carrotsight"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post' || CONFIG.sidebar === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>
