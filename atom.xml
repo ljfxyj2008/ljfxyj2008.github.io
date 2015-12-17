@@ -4,7 +4,7 @@
   <subtitle><![CDATA[记录点滴]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://www.carrotsight.com/"/>
-  <updated>2015-12-17T03:33:41.000Z</updated>
+  <updated>2015-12-17T03:36:25.000Z</updated>
   <id>http://www.carrotsight.com/</id>
   
   <author>
@@ -19,7 +19,7 @@
     <link href="http://www.carrotsight.com/2015/12/09/%E5%8F%AF%E7%BC%A9%E6%94%BE%E6%97%B6%E9%97%B4%E8%BD%B4%E5%92%8C%E5%BD%95%E5%83%8F%E7%89%87%E6%AE%B5%E9%80%89%E6%8B%A9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0.html"/>
     <id>http://www.carrotsight.com/2015/12/09/可缩放时间轴和录像片段选择器的实现.html</id>
     <published>2015-12-09T06:53:40.000Z</published>
-    <updated>2015-12-17T03:33:41.000Z</updated>
+    <updated>2015-12-17T03:36:25.000Z</updated>
     <content type="html"><![CDATA[<p>最近的工作是做了两个自定义控件：<br>①可以缩放的时间轴<br>②吸附在在时间轴上有两个滑动按钮的录像片段选择器  </p>
 <p>真机测试效果如下面的gif动画所示：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/74682253.jpg" alt=""></p>
 <p>在此记录一下设计原理和踩过的坑。</p>
@@ -62,7 +62,8 @@
 <h2 id="录像片段选择器">录像片段选择器</h2><p>通过两个滑动按钮来选择录像片段，两个滑动按钮之间的部分表示被选中的片段，两个滑动按钮上要显示对应的录像截图、时间文字提示，在滑动时、静止时根据获取成功与否显示不同的占位图。由于录像片段选择器上的时间信息是依附于时间轴控件的，所以当时间轴被滑动、缩放时，录像片段选择器也要同步更新。</p>
 <p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/52392486.jpg" alt=""></p>
 <p>很明显，这个控件简化一下就是有两个thumb的seekbar，所以就取github上找了一下两个按钮的seekbar控件，结果找到了<a href="https://github.com/yahoo/android-range-seek-bar" target="_blank" rel="external">anothem/android-range-seek-bar项目</a>，它提供与android的seekbar视觉效果类似的双按钮seekbar控件。<br>我的改造工作主要就是重写onMeasure()、onLayout()、onDraw()、onTouchEvent()方法，最麻烦的就是onDraw（）中绘制时对绝对坐标的计算。其计算方法与时间轴类似，甚至还简单许多，这里就不再重复写了。</p>
-<p>这里的一个坑：<br>由于这个自定义view中需要用到android的ImageView（给Glide使用），所以这个自定义view就不能继承于view，而是继承于ViewGroup，这样就可以在初始化阶段向其中添加其他view了。然而调试的时候发现，onDraw（）方法怎么都不会被调用。原来，ViewGroup默认只是用来布局，一般没有什么需要绘制的东西，所以系统默认就不调用它的onDraw（）回调。如果要让ViewGroup的onDraw（）方法被回调，有两种方法：<br>【方法1】让系统知道这个ViewGroup有可绘制的东西，比如在xml中定义这个ViewGroup的时候为它指定background属性。<br>【方法2】在代码中调用setWillNotDraw(false)强制要求调用onDraw()方法。</p>
+<p><em>这里的一个坑</em>：<br>由于这个自定义view中需要用到android的ImageView（给Glide使用），所以这个自定义view就不能继承于<code>view</code>，而是继承于<code>ViewGroup</code>，这样就可以在初始化阶段向其中添加其他view了。然而调试的时候发现，<code>onDraw（）</code>方法怎么都不会被调用。原来，ViewGroup默认只是用来布局，一般没有什么需要绘制的东西，所以系统默认就不调用它的onDraw（）回调。如果要让ViewGroup的onDraw（）方法被回调，有两种方法：  </p>
+<p>【方法1】让系统知道这个ViewGroup有可绘制的东西，比如在xml中定义这个ViewGroup的时候为它指定background属性。<br>【方法2】在代码中调用setWillNotDraw(false)强制要求调用onDraw()方法。</p>
 ]]></content>
     <summary type="html">
     <![CDATA[<p>最近的工作是做了两个自定义控件：<br>①可以缩放的时间轴<br>②吸附在在时间轴上有两个滑动按钮的录像片段选择器  </p>
