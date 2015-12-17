@@ -73,7 +73,7 @@
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/78534287.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/73909141.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/52392486.jpg">
-<meta property="og:updated_time" content="2015-12-10T07:37:56.000Z">
+<meta property="og:updated_time" content="2015-12-17T03:33:41.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="可缩放时间轴和录像片段选择器的实现">
 <meta name="twitter:description" content="最近的工作是做了两个自定义控件：①可以缩放的时间轴②吸附在在时间轴上有两个滑动按钮的录像片段选择器  
@@ -380,6 +380,7 @@
 <h2 id="录像片段选择器">录像片段选择器</h2><p>通过两个滑动按钮来选择录像片段，两个滑动按钮之间的部分表示被选中的片段，两个滑动按钮上要显示对应的录像截图、时间文字提示，在滑动时、静止时根据获取成功与否显示不同的占位图。由于录像片段选择器上的时间信息是依附于时间轴控件的，所以当时间轴被滑动、缩放时，录像片段选择器也要同步更新。</p>
 <p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/52392486.jpg" alt=""></p>
 <p>很明显，这个控件简化一下就是有两个thumb的seekbar，所以就取github上找了一下两个按钮的seekbar控件，结果找到了<a href="https://github.com/yahoo/android-range-seek-bar" target="_blank" rel="external">anothem/android-range-seek-bar项目</a>，它提供与android的seekbar视觉效果类似的双按钮seekbar控件。<br>我的改造工作主要就是重写onMeasure()、onLayout()、onDraw()、onTouchEvent()方法，最麻烦的就是onDraw（）中绘制时对绝对坐标的计算。其计算方法与时间轴类似，甚至还简单许多，这里就不再重复写了。</p>
+<p>这里的一个坑：<br>由于这个自定义view中需要用到android的ImageView（给Glide使用），所以这个自定义view就不能继承于view，而是继承于ViewGroup，这样就可以在初始化阶段向其中添加其他view了。然而调试的时候发现，onDraw（）方法怎么都不会被调用。原来，ViewGroup默认只是用来布局，一般没有什么需要绘制的东西，所以系统默认就不调用它的onDraw（）回调。如果要让ViewGroup的onDraw（）方法被回调，有两种方法：<br>【方法1】让系统知道这个ViewGroup有可绘制的东西，比如在xml中定义这个ViewGroup的时候为它指定background属性。<br>【方法2】在代码中调用setWillNotDraw(false)强制要求调用onDraw()方法。</p>
 </span>
       
     </div>
