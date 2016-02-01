@@ -248,6 +248,224 @@
 
     
     
+      
+      
+        
+        
+        
+      
+
+      
+    
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html" itemprop="url">
+                  浅谈Android自定义Lint规则的实现 （二）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-02-01T11:30:35+08:00" content="2016-02-01">
+              2016-02-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" itemprop="url">
+                  浅谈Android自定义Lint规则的实现 （一）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-01-29T11:00:50+08:00" content="2016-01-29">
+              2016-01-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        
+          <p>最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。</p>
+<h2 id="什么是Android_Lint">什么是Android Lint</h2><p>Android Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。  </p>
+<p>在Android SDK Tools 16及更高的版本中，Lint工具会自动安装。通过它对Android工程源代码进行扫描和检查，可发现潜在的问题，以便程序员及早修正这个问题。Android Lint提供了命令行方式执行，还与IDE（如Android Studio）进行了集成，并提供了xml和html形式的输出报告。  </p>
+<p>看了上面的介绍可能大家依然很迷惑“这货到底有啥用”，其实我们平时在Android开发过程中一直在享受Lint带来的便利。比如，下面图中的警告和错误提示，相信大家应该很熟悉吧：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/23031672.jpg" alt=""></p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
 
     
       
@@ -331,9 +549,6 @@
         
           <p>最近的工作是做了两个自定义控件：<br>①可以缩放的时间轴<br>②吸附在在时间轴上有两个滑动按钮的录像片段选择器  </p>
 <p>真机测试效果如下面的gif动画所示：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/74682253.jpg" alt=""></p>
-<p>在此记录一下设计原理和踩过的坑。</p>
-<h2 id="时间轴">时间轴</h2><p>时间轴分为两部分轴，刻度轴和录像片段轴。刻度轴用来绘制时间刻度表盘，录像片段轴用来指示对应位置有没有录像存在。<br>时间轴的视觉效果如下：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/11028878.jpg" alt=""></p>
-<p>其中下面有时间标注的刻度部分是刻度轴，上面灰色背景一段一段绿色的部分是录像片段轴，如下图的标注所示：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/86365109.jpg" alt=""></p>
           <div class="post-more-link text-center">
             <a class="btn" href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html" rel="contents">
               阅读全文 &raquo;
@@ -1096,220 +1311,14 @@
 
 
     
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html" itemprop="url">
-                  【FLEX bug:无法启动服务，因为fml文件损坏】的解决办法
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2013-12-02T13:01:15+08:00" content="2013-12-02">
-              2013-12-02
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Flex/" itemprop="url" rel="index">
-                    <span itemprop="name">Flex</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>在Flash Builder中，提示</p>
-<blockquote>
-<p>FLEX bug:无法启动服务，因为fml文件损坏。</p>
-</blockquote>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html" itemprop="url">
-                  Flex中datagrid中checkbox的全选实现
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            发表于
-            <time itemprop="dateCreated" datetime="2013-04-03T11:44:21+08:00" content="2013-04-03">
-              2013-04-03
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp; 分类于
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Flex/" itemprop="url" rel="index">
-                    <span itemprop="name">Flex</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body">
-
-      
-      
-
-      
-        
-          <p>假设住程序的表格中有一列是checkbox，用户勾选后进行其他操作，定义为：</p>
-<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">chkChooseAll_changeHandler</span><span class="params">(event:Event)</span><span class="type">:void</span></span><br><span class="line"></span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> <span class="keyword">each</span>(<span class="keyword">var</span> item:XML <span class="keyword">in</span> adg.dataProvider)</span><br><span class="line">   &#123;</span><br><span class="line">       item.@selected = chkChooseAll.selected;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
 
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
         </div>
@@ -1348,7 +1357,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-count">12</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -1362,7 +1371,7 @@
 
           <div class="site-state-item site-state-tags">
             <a href="/tags">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">18</span>
               <span class="site-state-item-name">标签</span>
               </a>
           </div>

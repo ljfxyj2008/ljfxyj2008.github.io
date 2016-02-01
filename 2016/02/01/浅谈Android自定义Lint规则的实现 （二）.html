@@ -1,0 +1,826 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Lint,custom lint rules," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ljfxyj2008风巢" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈Android自定义Lint规则的实现 （二）">
+<meta property="og:url" content="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">
+<meta property="og:site_name" content="ljfxyj2008风巢">
+<meta property="og:description" content="上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/14308921.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/55021440.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/67433168.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/92067715.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-2-1/36527297.jpg">
+<meta property="og:updated_time" content="2016-02-01T03:45:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈Android自定义Lint规则的实现 （二）">
+<meta name="twitter:description" content="上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'always',
+    motion: true
+  };
+</script>
+
+  <title> 浅谈Android自定义Lint规则的实现 （二） | ljfxyj2008风巢 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?449259d6f926d9e469b862f243275e59";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">ljfxyj2008风巢</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">记录点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-memo">
+          <a href="/memo" rel="section">
+            
+              <i class="menu-item-icon fa fa-question-circle fa-fw"></i> <br />
+            
+            备忘
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'dMqdYr62RGqqfwhQNdbT','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                浅谈Android自定义Lint规则的实现 （二）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-02-01T11:30:35+08:00" content="2016-02-01">
+              2016-02-01
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。</p>
+<a id="more"></a>
+<h2 id="检测Java源代码">检测Java源代码</h2><p>针对Java源代码做Lint检测，我们需要让自定义的XXXDetector类继承com.android.tools.lint.detector.api.Detector类，并实现com.android.tools.lint.detector.api.Detector.JavaScanner接口，同时在该XXXDetector对应的Issue中定义检测的范围为com.android.tools.lint.detector.api.Scope.JAVA_FILE_SCOPE，如图：  </p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/14308921.jpg" alt="">  </p>
+<p>其实我们查看Detector类的源码会发现，JavaScanner是在Detector中定义的内部接口，JavaScanner接口中定义的10个方法，都以完全相同的签名在Detector中重新定义了一遍。所以，Detector相当于是JavaScanner接口的适配器，上图中我们自定义的ActivityFragmentLayoutNameDetector类可以根据需要只实现JavaScanner接口的部分方法，而不需要实现全部10个方法。<br>作为7个Scanner（这7个Scanner在上一篇中有介绍，这里的JavaScanner就是其中一个）的外部类，Detector实际上是它们共同的适配器。  </p>
+<p>JavaScanner接口定义的10个方法如下图所示：</p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/55021440.jpg" alt="">  </p>
+<p>从上图可以看到，JavaScanner定义的很多方法都用到了Node类，还出现了ConstructorInvocation、MethodInvocation等类。那么这些类到底代表什么，我们如何在java源代码的分析中使用这些类呢？要搞清楚这个问题，我们首先要介绍一下Abstract Syntax Tree。</p>
+<h3 id="Abstract_Syntax_Tree是什么">Abstract Syntax Tree是什么</h3><p>在计算机科学中，Abstract Syntax Tree（简称AST）是对程序设计语言写成的源代码的一种树型表示。树中的每一个节点（node）代表在源代码中存在的一个构建体。之说以说语法树是“抽象的”（Abstract）是因为它并没有把真实语法的所有细节都表达出来，比如成对匹配的括号就隐式的用树结构来表达，一条if-condition-then语句可能就用一个具有3个分支的节点来表达。  </p>
+<p>在Java和Android开发工作中，IDE工具带给我们的很多便利功能都是通过AST来实现的，比如Quick Fix、Quick Assist、修改一个变量名时自动把所有对该变量的引用都同步修改、以及在Android Studio中摁住<code>⌘</code>键的同时点击一个类名会跳转到那个类的定义文件等。  </p>
+<p>AST与XML文件的DOM模型类似，允许你通过修改树模型来把这些修改反映到Java源代码中。不过我们在自定义Lint使用AST的过程中一般不涉及修改节点。一个AST的例子如下图:  </p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/67433168.jpg" alt=""></p>
+<p>在查看Android Lint源码的过程中可以发现，它涉及到两套AST的实现API，一套是<code>Ecj（Eclipse Java development tools）</code>的，在包<code>org.eclipse.jdt.internal.compiler.ast</code>中；另一套是<code>lombok.ast</code>的。系统暴露给我们允许我们直接用来扩展Lint规则的是lombok.ast的AST API。JavaScanner定义的10个方法中的Node指的就是lombok.ast.Node，而ConstructorInvocation、MethodInvocation都是lombok.ast.Node的子类。</p>
+<p>如果你对AST感兴趣，可以查看<a href="http://www.eclipse.org/articles/Article-JavaCodeManipulation_AST/" target="_blank" rel="external">Eclipse网站的AST介绍文档</a>。</p>
+<h3 id="JavaScanner接口方法的使用">JavaScanner接口方法的使用</h3><p>前面的图片显示了JavaScanner接口定义的10个方法，这些方法有些可以单独使用，有些需要配合使用，这里介绍常见的用法。  </p>
+<p>【1】getApplicableNodeTypes（）需要与createJavaVisitor（）配合使用。  </p>
+<p>getApplicableNodeTypes（）返回我们感兴趣的Node列表，然后在createJavaVisitor（）返回的AstVisitor中去处理这些Node。<br>比如，我们想对java源代码中的if、try、for语句进行检测，就可以这样实现getApplicableNodeTypes（）：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;<span class="keyword">Class</span>&lt;? <span class="keyword">extends</span> Node&gt;&gt; getApplicableNodeTypes() &#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.<span class="keyword">asList</span>(<span class="keyword">Try</span>.<span class="keyword">class</span>, <span class="keyword">If</span>.<span class="keyword">class</span>, <span class="keyword">For</span>.<span class="keyword">class</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中的Try、If、For都是lombok.ast.Node的子类。</p>
+<p>然后定义一个AstVisitor的子类，并在createJavaVisitor（）中返回它的一个实例，那么在java源码中出现的try、if、for语句对应的node就会触发ForIfTryBlockVisitor中对应的回调函数：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function">AstVisitor <span class="title">createJavaVisitor</span><span class="params">(@NonNull JavaContext context)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ForIfTryBlockVisitor(context);</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">ForIfTryBlockVisitor</span> <span class="keyword">extends</span> <span class="title">ForwardingAstVisitor</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> JavaContext mContext;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ForIfTryBlockVisitor</span><span class="params">(JavaContext context)</span> </span>&#123;</span><br><span class="line">            mContext = context;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">visitTry</span><span class="params">(Try node)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//... 在这里对try语句做你需要的检查</span></span><br><span class="line">            </span><br><span class="line">            <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">visitTry</span><span class="params">(node)</span></span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">visitFor</span><span class="params">(For node)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//... 在这里对for语句做你需要的检查</span></span><br><span class="line">            </span><br><span class="line">            <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">visitFor</span><span class="params">(node)</span></span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="function"><span class="keyword">boolean</span> <span class="title">visitIf</span><span class="params">(If node)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//... 在这里对if语句做你需要的检查  </span></span><br><span class="line">                      </span><br><span class="line">            <span class="function"><span class="keyword">return</span> <span class="keyword">super</span>.<span class="title">visitIf</span><span class="params">(node)</span></span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>【2】getApplicableMethodNames()需要与void visitMethod(JavaContext context, AstVisitor visitor,  MethodInvocation node)配合使用，此时createJavaVisitor（）根据实际需求可有可无。  </p>
+<p>这里getApplicableMethodNames()用来返回你感兴趣的那些方法调用列表，这些方法调用对应的node每一次出现都会触发visitMethod(JavaContext context, AstVisitor visitor,  MethodInvocation node)方法被回调。  </p>
+<p>例如，我想针对java源代码中所有调用setContentView（）和inflate（）的代码进行检查，可以这样定义getApplicableMethodNames（）：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> List&lt;String&gt; getApplicableMethodNames() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">return</span> Arrays.<span class="title">asList</span><span class="params">(<span class="string">"setContentView"</span>, <span class="string">"inflate"</span>)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在visitMethod方法中做具体处理：</p>
+<figure class="highlight d"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> visitMethod(<span class="keyword">@NonNull</span> JavaContext context, AstVisitor visitor, <span class="keyword">@NonNull</span> MethodInvocation node) &#123;</span><br><span class="line">    String methodName = node.astName().astValue();</span><br><span class="line">    <span class="keyword">if</span> (methodName.equals(<span class="string">"setContentView"</span>)) &#123;            </span><br><span class="line">        <span class="comment">//在这里做针对setContentView（）调用的具体检查</span></span><br><span class="line">           </span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (methodName.equals(<span class="string">"inflate"</span>)) &#123;</span><br><span class="line">        <span class="comment">//在这里做针对inflate（）调用的具体检查</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>【3】getApplicableConstructorTypes（）需要与visitConstructor(JavaContext context, AstVisitor visitor,ConstructorInvocation node,ResolvedMethod constructor)配合使用，此时createJavaVisitor（）根据实际需求可有可无。  </p>
+<p>这里getApplicableConstructorTypes（）用来返回你感兴趣的构造方法的列表，系统会在符合条件的构造方法的每一次出现都回调一次visitConstructor方法，而传入的node参数就是对应的调用构造函数在AST中的节点。</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> List&lt;<span class="built_in">String</span>&gt; getApplicableConstructorTypes() &#123;</span><br><span class="line">    <span class="keyword">return</span> Arrays.asList(<span class="string">"com.ljfxyj2008.BlankFragment"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line"><span class="keyword">public</span> <span class="built_in">void</span> visitConstructor(@NonNull JavaContext context, AstVisitor visitor, @NonNull ConstructorInvocation node, @NonNull JavaParser.ResolvedMethod <span class="constructor"><span class="keyword">constructor</span>) </span>&#123;</span><br><span class="line">    <span class="comment">//在这里做针对构造函数调用语句的具体检查</span></span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">"===visitConstructor node = "</span> + node</span><br><span class="line">            + <span class="string">"\nlocation = "</span> + context.getLocation(node).getStart().getLine());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>【4】appliesToResourceRefs（）需要与visitResourceReference(JavaContext context,AstVisitor visitor,Node node,String type,String name,boolean isFramework)配合使用，用来对感兴趣的资源文件引用的代码进行检查，比如引用了<code>R.layout.main</code>或者<code>R.string.app_name</code>的代码。</p>
+<p>这两个方法的实现步骤与前面的几对类似，就不再贴代码了。</p>
+<p>在上面介绍的JavaScanner的所有相关API中，最重要的就是createJavaVisitor（）以及该方法返回的AstVisitor。事实上，我们完全可以只利用createJavaVisitor（）方法以及对应的AstVisitor，就完成对java源代码的所有检查工作。之所以Lint系统为JavaScanner接口定义了10个方法，仅仅是为了使得对常见的一些处理需求实现起来更加简洁和高效。</p>
+<h3 id="lombok-ast_API中重要的类">lombok.ast API中重要的类</h3><p>既然Lint分析是处理AST中的节点，那么最重要最常用的类当然就是lombok.ast.Node了。<br>lombok.ast.Node实际上是一个接口，定义了对于AST节点的一系列通用操作，有多个抽象子类/接口都实现/继承了它。而在这些抽象子类/接口中我们最常用到的是AbstractNode。AbstractNode是实现了lombok.ast.Node接口的抽象类，它有为数众多的子类，这些子类直接与各种语句直接对应，如图：  </p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/92067715.jpg" alt=""></p>
+<p>可以看到常用的case、break、continue、for、if等语句都直接被映射为这里具体的Node子类，而类构造器的声明与调用（即用new关键字来生成一个新对象）也能在这里找到对应的类（即ConstructorDeclaration和ConstructorInvocation）。有了AbstractNode如此丰富的子类，我么对java源码的分析就方便了很多，对于自己想要分析的元素，先找到与它对应的AbstractNode子类，然后在定义自己的AstVisitor时去分析这个对应类即可。  </p>
+<p>下面给出一个简单的例子，目的是检查用户有没有使用<code>new Message（）</code>来获取新的android.os.Message对象，如果有这种调用，我们就抛出一个issue，提示用户应该使用效率更高的<code>handler.obtainMessage</code>或者<code>Message.Obtain()</code>来获取，代码如下：  </p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">MessageObtainDetector</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">Detector</span></span><br><span class="line"></span>        implements <span class="type">Detector</span>.<span class="type">JavaScanner</span> &#123;</span><br><span class="line">    public static <span class="keyword">final</span> <span class="type">Issue</span> <span class="type">ISSUE</span> = <span class="type">Issue</span>.create(<span class="string">"MessageObtainNotUsed"</span>,</span><br><span class="line">            <span class="string">"You should not call `new Message()` directly."</span>,</span><br><span class="line">            <span class="string">"You should not call `new Message()` directly. Instead, you should use `handler.obtainMessage` or `Message.Obtain()`."</span>,</span><br><span class="line">            <span class="type">Category</span>.<span class="type">CORRECTNESS</span>,</span><br><span class="line">            <span class="number">9</span>,</span><br><span class="line">            <span class="type">Severity</span>.<span class="type">ERROR</span>,</span><br><span class="line">            <span class="keyword">new</span> <span class="type">Implementation</span>(<span class="type">MessageObtainDetector</span>.<span class="keyword">class</span>,</span><br><span class="line">                    <span class="type">Scope</span>.<span class="type">JAVA_FILE_SCOPE</span>));</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    public <span class="type">List</span>&lt;<span class="type">Class</span>&lt;? <span class="keyword">extends</span> <span class="type">Node</span>&gt;&gt; getApplicableNodeTypes() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Collections</span>.&lt;<span class="type">Class</span>&lt;? <span class="keyword">extends</span> <span class="type">Node</span>&gt;&gt;singletonList(<span class="type">ConstructorInvocation</span>.<span class="keyword">class</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    public <span class="type">AstVisitor</span> createJavaVisitor(<span class="annotation">@NonNull</span> <span class="type">JavaContext</span> context) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">MessageObtainVisitor</span>(context);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">MessageObtainVisitor</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ForwardingAstVisitor</span> &#123;</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">JavaContext</span> mContext;</span><br><span class="line"></span><br><span class="line">        public <span class="type">MessageObtainVisitor</span>(<span class="type">JavaContext</span> context) &#123;</span><br><span class="line">            mContext = context;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="annotation">@Override</span></span><br><span class="line">        public boolean visitConstructorInvocation(<span class="type">ConstructorInvocation</span> node) &#123;</span><br><span class="line">            <span class="type">JavaParser</span>.<span class="type">ResolvedNode</span> resolvedType = mContext.resolve(node.astTypeReference());</span><br><span class="line">            <span class="type">JavaParser</span>.<span class="type">ResolvedClass</span> resolvedClass = (<span class="type">JavaParser</span>.<span class="type">ResolvedClass</span>) resolvedType;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (resolvedClass != <span class="literal">null</span></span><br><span class="line">                    &amp;&amp; resolvedClass.isSubclassOf(<span class="string">"android.os.Message"</span>, <span class="literal">false</span>))&#123;</span><br><span class="line">                mContext.report(<span class="type">ISSUE</span>,</span><br><span class="line">                        node,</span><br><span class="line">                        mContext.getLocation(node),</span><br><span class="line">                        <span class="string">"You should not call `new Message()` directly."</span>);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.visitConstructorInvocation(node);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码结构非常简单，在getApplicableNodeTypes()方法中返回一个List表明我们只对ConstructorInvocation.class感兴趣，然后在createJavaVisitor（）中返回一个自定义的AstVisitor对象，也就是这里的MessageObtainVisitor。因为是检测对构造方法的调用，所以我们在MessageObtainVisitor的定义中只需要重写visitConstructorInvocation（）方法。事实上，即使我们把这里对getApplicableNodeTypes()重写的代码段删除，仍然可以达到检测<code>new Message()</code>的目的，因为只要在MessageObtainVisitor（）中重写了visitXXX（）就可以保证它被调用，但是我们重写getApplicableNodeTypes()可以确保效率更高。  </p>
+<p>认真看自定义类MessageObtainVisitor的visitConstructorInvocation（）方法体，可以看到这两行代码:</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">JavaParser.ResolvedNode resolvedType = mContext.resolve(<span class="keyword">node</span>.<span class="identifier"></span><span class="title">astTypeReference</span>());</span><br><span class="line">JavaParser.ResolvedClass resolvedClass = (JavaParser.ResolvedClass) resolvedType;</span><br></pre></td></tr></table></figure>
+<p>这两行代码非常关键，它把lombok.ast中的类转换成了JavaParser中的类，如此一来我们就可以获取与此node对应的类、变量、方法或注解的详细信息。比如这里的node被转换为resolvedClass后，就可以获取与此类有关的类继承关系。  </p>
+<p>由于lombok.ast中各种回调函数（如getApplicableNodeTypes、visitConstructorInvocation等）的参数都是lombok.ast.Node类型，它们包含的都是与AST（抽象语法树）相关的结构性信息，而这些信息对于我们分析java源码的具体业务来说肯定是远远不够的，所以在合适的时机把node转换成JavaParser中各种合适的类型就非常重要。那么在lombok.ast的各种回调函数中传入的node能够被转换成哪些类型呢？看下图：</p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-2-1/36527297.jpg" alt=""></p>
+<p>可以看到类型还是相当丰富的，足够我们对AST各种节点进行详细分析了。</p>
+<p>相信细心的朋友应该发现了，上面MessageObtainDetector这个类的代码中是对ConstructorInvocation.class类型的节点进行了分析，而我们在<code>JavaScanner接口方法的使用</code>这一节的第3条介绍了getApplicableConstructorTypes（）和visitConstructor（）方法，它们看起来很类似啊？没错，对于MessageObtainDetector类中进行的构造方法调用检查，我们同样可以用getApplicableConstructorTypes（）和visitConstructor（）来实现，这样就不需要自己去定义一个MessageObtainVisitor了。我们在前面也提到过，JavaScanner中的定义的10个回调方法，其实大部分都是为了简化代码结构与提高执行效率，其实完全可以只用自定义的ForwardingAstVisitor来完成所有检测功能。  </p>
+<p>还有一组比较有用的类型转换方法上面没有提到：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ClassDeclaration surroundingClass = JavaContext.findSurroundingClass(<span class="keyword">node</span><span class="identifier"></span><span class="title">);</span><br><span class="line">Node</span> surroundingMethod = JavaContext.findSurroundingMethod(<span class="keyword">node</span><span class="identifier"></span><span class="title">);</span></span><br></pre></td></tr></table></figure>
+<p>用这组方法可以获取到此node外围包裹它的类或方法，这是JavaContext类提供的两个静态方法，可以将这两个方法与上面介绍的JavaParser中的ResolvedXXX类型配合使用。</p>
+<h2 id="小结">小结</h2><p>使用Lint来分析java源代码，需要实现JavaScanner中合适的回调函数。这些回调函数大部分是为了使得对常见的一些处理需求实现起来更加简洁和高效，事实上我们完全可以只用自定义的<code>AstVisitor</code>来完成所有Lint检查工作，并在createJavaVisitor（）中返回这个自定义AstVisitor的实例。<br>JavaScanner回调函数的node包含的都是与AST结构相关的信息，如果要对node对应的java类、方法等进行详细的业务分析，就需要把node转换成JavaParser中定义的合适类型。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/Lint/" rel="tag">#Lint</a>
+          
+            <a href="/tags/custom-lint-rules/" rel="tag">#custom lint rules</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" rel="next" title="浅谈Android自定义Lint规则的实现 （一）">
+                <i class="fa fa-chevron-left"></i> 浅谈Android自定义Lint规则的实现 （一）
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html"
+           data-title="浅谈Android自定义Lint规则的实现 （二）" data-url="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/icon_leehom.jpg" alt="ljfxyj2008" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">ljfxyj2008</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">记录点滴</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ljfxyj2008" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> facebook
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/u/1743025334" target="_blank">
+                  
+                    <i class="fa fa-weibo"></i> Weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#检测Java源代码"><span class="nav-number">1.</span> <span class="nav-text">检测Java源代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Abstract_Syntax_Tree是什么"><span class="nav-number">1.1.</span> <span class="nav-text">Abstract Syntax Tree是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScanner接口方法的使用"><span class="nav-number">1.2.</span> <span class="nav-text">JavaScanner接口方法的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lombok-ast_API中重要的类"><span class="nav-number">1.3.</span> <span class="nav-text">lombok.ast API中重要的类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">2.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ljfxyj2008</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"carrotsight"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post' || CONFIG.sidebar === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>

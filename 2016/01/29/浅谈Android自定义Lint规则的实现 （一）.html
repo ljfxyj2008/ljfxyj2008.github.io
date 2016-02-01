@@ -1,0 +1,934 @@
+<!doctype html>
+<html class="theme-next   use-motion ">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.4.5.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Lint,custom lint rules," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ljfxyj2008风巢" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.4.5.2" />
+
+
+
+
+
+
+<meta name="description" content="最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。
+什么是Android LintAndroid Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈Android自定义Lint规则的实现 （一）">
+<meta property="og:url" content="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">
+<meta property="og:site_name" content="ljfxyj2008风巢">
+<meta property="og:description" content="最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。
+什么是Android LintAndroid Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/23031672.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/32957935.jpg">
+<meta property="og:image" content="http://developer.android.com/images/tools/lint.png">
+<meta property="og:image" content="http://developer.android.com/images/tools/studio-inspections-config.png">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/69265121.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/59960096.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/55021440.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/63801235.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/31784308.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/81593485.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/1707982.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/5157796.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/94526179.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/98524820.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/27544737.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/27617933.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/98524820.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/8544219.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/11713429.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/9825338.jpg">
+<meta property="og:updated_time" content="2016-02-01T03:47:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈Android自定义Lint规则的实现 （一）">
+<meta name="twitter:description" content="最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。
+什么是Android LintAndroid Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: 'always',
+    motion: true
+  };
+</script>
+
+  <title> 浅谈Android自定义Lint规则的实现 （一） | ljfxyj2008风巢 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  <!--[if lte IE 8]>
+  <div style=' clear: both; height: 59px; padding:0 0 0 15px; position: relative;margin:0 auto;'>
+    <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+      <img src="http://7u2nvr.com1.z0.glb.clouddn.com/picouterie.jpg" border="0" height="42" width="820"
+           alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today or use other browser ,like chrome firefox safari."
+           style='margin-left:auto;margin-right:auto;display: block;'/>
+    </a>
+  </div>
+<![endif]-->
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?449259d6f926d9e469b862f243275e59";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <div class="container one-column page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">ljfxyj2008风巢</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">记录点滴</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu menu-left">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-memo">
+          <a href="/memo" rel="section">
+            
+              <i class="menu-item-icon fa fa-question-circle fa-fw"></i> <br />
+            
+            备忘
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-heartbeat fa-fw"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <form class="site-search-form">
+    <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+  </form>
+
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'dMqdYr62RGqqfwhQNdbT','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div id="content" class="content">
+          
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                浅谈Android自定义Lint规则的实现 （一）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            发表于
+            <time itemprop="dateCreated" datetime="2016-01-29T11:00:50+08:00" content="2016-01-29">
+              2016-01-29
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp; 分类于
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body">
+
+      
+      
+
+      
+        <span itemprop="articleBody"><p>最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。</p>
+<h2 id="什么是Android_Lint">什么是Android Lint</h2><p>Android Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。  </p>
+<p>在Android SDK Tools 16及更高的版本中，Lint工具会自动安装。通过它对Android工程源代码进行扫描和检查，可发现潜在的问题，以便程序员及早修正这个问题。Android Lint提供了命令行方式执行，还与IDE（如Android Studio）进行了集成，并提供了xml和html形式的输出报告。  </p>
+<p>看了上面的介绍可能大家依然很迷惑“这货到底有啥用”，其实我们平时在Android开发过程中一直在享受Lint带来的便利。比如，下面图中的警告和错误提示，相信大家应该很熟悉吧：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/23031672.jpg" alt=""></p>
+<a id="more"></a>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/32957935.jpg" alt=""></p>
+<p>上面的例子分别是java文件与Manifest文件在接受Lint检查后给出的简要lint报告，是Lint与IDE集成后的一种表现形式。事实上，Android Lint目前能检查的项目已经多达220项，检查的范围涵盖了二进制资源文件、java源代码、class文件、gradle配置文件、xml文件、resource文件夹、其他文件等。除了图中这种与IDE结合的简洁报告形式以外，也提供更详细的html和xml形式的报告，让你对自己代码质量的提升空间有更全面的认识。  </p>
+<p>在Android Studio中，每一次编译程序时都会自动运行lint分析工具，也可以在需要lint分析的文件夹、包或文件上点击右键选择【Analyze】-&gt;【Inspect Code】。 生成的报告包含了检查过程中发现的问题，并把这些内容按照类别、优先级、严重程度进行了区分。  </p>
+<p>Lint工具的处理流程如下图所示：<br><img src="http://developer.android.com/images/tools/lint.png" alt="Lint工作流">  </p>
+<p>图中各部分含义如下：  </p>
+<ul>
+<li>Application source files： 构成你Android project的源文件，包含Java和XML文件，图标，以及ProGuard配置文件。</li>
+<li>lint.xml： 配置文件，用来指定你想禁用哪些lint检查功能，以及自定义问题严重度(problem severity levels）。</li>
+<li>lint Tool： 一个可以从命令行或Android Studio中运行的静态打码扫描工具。</li>
+<li>lint Output： lint检查的结果，可以在命令行中通过lint查看，也可以在Android Studio的Event Log中查看。</li>
+</ul>
+<h2 id="Android_Lint检查哪些内容">Android Lint检查哪些内容</h2><p>Android Lint内置了很多lint规则，到现在为止是220项检查，总共可以分为以下几类：  </p>
+<ul>
+<li>Correctness 正确性</li>
+<li>Security 安全性</li>
+<li>Performance 性能</li>
+<li>Usability 可用性</li>
+<li>Accessibility 可访问性</li>
+<li>Internationalization 国际化</li>
+</ul>
+<p>下面列举一些常见的lint会检测的代码问题：</p>
+<ul>
+<li>缺少翻译（和未使用的翻译）</li>
+<li>布局性能问题（老的layoutopt工具会用于查找所有这样的问题，和除此之外更多的问题）</li>
+<li>未使用的资源</li>
+<li>不一致的数组大小（当在多个配置中定义数组）</li>
+<li>可访问性和国际化问题（硬编码字符串，缺少contentDescription等）</li>
+<li>图标问题 （如丢失密度、 重复图标、 错误尺寸等）</li>
+<li>可用性问题 （如不在文本字段上指定输入的类型）</li>
+<li>清单错误</li>
+</ul>
+<blockquote>
+<p>如果要查看lint工具支持的issue的完整列表和它们所对应的issue ID，可以使用<code>lint --list</code>命令。</p>
+</blockquote>
+<h2 id="配置Android_Lint">配置Android Lint</h2><p>默认情况下，当你运行Lint扫描时，它会对Lint支持的所有issue进行检查。你也可以限制只让lint检查特定的issue，并为某些issue分配严重度（severity level）。<br>比如，你可以禁止lint检查那些与你的项目无关的issue，并为lint配置一个更低的severity level来让它报告那些不是非常严重的issue。  </p>
+<p>你可以为lint检查配置不同的level：</p>
+<ul>
+<li>全局（对整个project）</li>
+<li>每个project module</li>
+<li>每个production module</li>
+<li>每个test module</li>
+<li>每个open files</li>
+<li>每个class hierarchy</li>
+<li>每个Version Control System (VCS) scopes</li>
+</ul>
+<h3 id="在Android_Studio中配置Lint">在Android Studio中配置Lint</h3><p>Android Studio允许你对lint每项检查单独启用或禁用，还可以对项目全局、特定文件夹、特定文件进行专门的lint配置。方法是在Android Studio中点击<code>File &gt; Settings &gt; Project Settings</code>菜单打开<code>Editor-&gt;Inspections</code>页面，里面有它支持的Profiles和Inspections列表，如图：<br><img src="http://developer.android.com/images/tools/studio-inspections-config.png" alt="Inspection Configuration"></p>
+<h3 id="配置Lint文件">配置Lint文件</h3><p>你可以在lint.xml文件中指定你对lint检查的偏好设置。如果你要手动创建这个文件，就把它放在你的Android工程的根目录中。如果你是在Android Studio中配置lint偏好，那么lint.xml文件会自动创建并添加到你的Android工程中。  </p>
+<p>lint.xml文件的组成结构是，最外面是一对闭合的<lint>标签，里面包含一个或多个<issue>子元素。每一个<issue>被唯一的id属性来标识，整体结构如下：</issue></issue></lint></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">lint</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- list of issues to configure --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">lint</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>通过设置<issue>标签中的severity属性值，你可以对某个issue禁用lint检查，或者修改某个issue的严重程度（severity level）。</issue></p>
+<p>一个实例lint.xml文件如下所示：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="pi">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">lint</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- Disable the given check in this project --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">issue</span> <span class="attribute">id</span>=<span class="value">"IconMissingDensityFolder"</span> <span class="attribute">severity</span>=<span class="value">"ignore"</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Ignore the ObsoleteLayoutParam issue in the specified files --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">issue</span> <span class="attribute">id</span>=<span class="value">"ObsoleteLayoutParam"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">ignore</span> <span class="attribute">path</span>=<span class="value">"res/layout/activation.xml"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">ignore</span> <span class="attribute">path</span>=<span class="value">"res/layout-xlarge/activation.xml"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">issue</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Ignore the UselessLeaf issue in the specified file --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">issue</span> <span class="attribute">id</span>=<span class="value">"UselessLeaf"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="title">ignore</span> <span class="attribute">path</span>=<span class="value">"res/layout/main.xml"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="title">issue</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!-- Change the severity of hardcoded strings to "error" --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">issue</span> <span class="attribute">id</span>=<span class="value">"HardcodedText"</span> <span class="attribute">severity</span>=<span class="value">"error"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">lint</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="在Java源文件或XML源文件中配置lint检查">在Java源文件或XML源文件中配置lint检查</h3><h4 id="在Java中配置lint检查">在Java中配置lint检查</h4><p>要对Android项目中某个Java类或方法禁用lint检查，只需要对那段代码添加<code>@SuppressLint</code>注解即可。<br>下面的例子显示了如何对onCreate方法关闭NewApi这个issue的lint检查。lint工具仍然会对这个类的其他方法进行NewApi issue的检查。例子如下：</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@SuppressLint</span>(<span class="string">"NewApi"</span>)</span><br><span class="line"><span class="annotation">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">    setContentView(R.layout.main);</span><br></pre></td></tr></table></figure>
+<p>下面的例子显示如何对FeedProvider类关闭ParserError issue的lint检查：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="annotation">@SuppressLint</span>(<span class="string">"ParserError"</span>)</span><br><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">FeedProvider</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">ContentProvider</span> &#123;</span></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果要在Java文件中禁用所有issue的lint检查，使用<code>all</code>关键字，比如：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@<span class="function"><span class="title">SuppressLint</span><span class="params">(<span class="string">"all"</span>)</span></span></span><br></pre></td></tr></table></figure>
+<h4 id="在XML中配置lint检查">在XML中配置lint检查</h4><p>如果要对XML文件中某一部分禁用lint检查，可以使用<code>tools:ignore</code>属性来标识。为了让这个属性能够被lint工具识别，必须把下面的命名空间加入你的XML中：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">xmlns</span>:<span class="title">tools</span>=<span class="string">"http://schemas.android.com/tools"</span></span><br></pre></td></tr></table></figure>
+<p>下面的例子显示了如何对XML布局文件中的<linearlayout>元素禁用<code>UnusedResources</code> issue的lint检查。<code>ignore</code>属性会被该元素下的子元素继承，在这个例子中，子元素<textview>同样被禁用了lint检查。</textview></linearlayout></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">LinearLayout</span> </span><br><span class="line">    <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">    <span class="attribute">xmlns:tools</span>=<span class="value">"http://schemas.android.com/tools"</span></span><br><span class="line">    <span class="attribute">tools:ignore</span>=<span class="value">"UnusedResources"</span> &gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="title">TextView</span></span><br><span class="line">        <span class="attribute">android:text</span>=<span class="value">"@string/auto_update_prompt"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">LinearLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>要禁用多个issue时，用逗号把它们分隔开，比如：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">tools:</span>ignore=<span class="string">"NewApi,StringFormatInvalid"</span></span><br></pre></td></tr></table></figure>
+<p>要在某个XML元素中对所有issue都禁用lint检查，可以使用<code>all</code>关键字，比如：</p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">tools:</span>ignore=<span class="string">"all"</span></span><br></pre></td></tr></table></figure>
+<h2 id="自定义lint">自定义lint</h2><h3 id="为什么需要自定义lint">为什么需要自定义lint</h3><p>由于每个项目自身的需求，Android Lint默认的检查项目可能不能满足我们的需求。<br>比如我们自己写了一个下拉刷新的库项目，可以让用户直接在xml布局文件中去使用它，但是我们希望用户必须在这个xml元素中定义一个<code>pullmode</code>属性，否则组件无法正常运行，我们希望lint能够对此进行检查，并在用户忘记添加此属性时给出明确的错误提示。再比如，我们的项目中使用了自己封装的日志库，能够方便的在release版本中关闭日志输出来防止app的效率下降，该日志库还能够把日志输出到指定的文件中方便事后分析，这时有一位新成员加入了我们的开发，他可能还是习惯性的用android.util.Log来打印日志，我们希望能够检测到本项目中所有使用了android.util.Log的代码，并发出警告。<br>要满足这些自定义需求，我们就需要通过Android Lint的扩展机制自己定制lint规则。  </p>
+<h3 id="自定义lint如何使用">自定义lint如何使用</h3><p>自定义lint是一个纯java项目，以jar的形式输出。有了包含lint规则的jar后，有两种使用方案：</p>
+<ul>
+<li>方案一：把此jar拷贝到 ~/.android/lint/ 目录中（文件名任意）。此时，这些lint规则针对所有项目生效。</li>
+<li>方案二：继续创建一个Android library项目，用来输出包含lint.jar的aar；然后，让目标项目依赖此aar即可使自定义lint规则生效。</li>
+</ul>
+<p>由于方案一是全局生效的策略，无法单独针对目标项目，用处不大。在工程实践中，我们主要使用方案二。</p>
+<p>AAR是Android Library的一种新的二进制分发格式，它把资源也一起打包，这样一来图片和布局资源文件也能够被同时分发。AAR格式文件能够包含一个可选的lint.jar文件，如果一个app依赖了一个包含lint.jar的aar文件，那么这个lint.jar中的规则就会在app的lint任务中被用来做lint检查。</p>
+<h3 id="自定义lint实现原理">自定义lint实现原理</h3><p>自定义lint规则是以jar形式存在的，主要通过继承两种类来实现扩展lint功能：<br>①继承<code>IssueRegistry</code>：这是自定义Lint规则的主类或者叫注册类，有且仅有一个，用来注册这个自定义Lint项目中有哪些自定义的issue（issue就是需要lint检查出来并报告给用户的各种问题）需要被检测。<br>②继承<code>Detector</code>并选择Detector中合适的<code>XXXScanner</code>接口来实现：在这里根据自身业务需求，实现各种自定义探测器（Detector),并定义各种issue，根据自身需求的不同这样的类可以有一个或多个。</p>
+<p>事实上，Android系统默认的lint检查功能是通过BuiltinIssueRegistry类来定义的，在这个类的源码中可以看到定义的各种issue、detector，如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/69265121.jpg" alt=""></p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/59960096.jpg" alt="">  </p>
+<p>com.android.tools.lint.detector.api.Detector提供了7种XXXScanner接口，根据自身需要选择合适的接口去实现，下面把这7个接口的信息列出：</p>
+<p>1、JavaScanner<br>功能：Specialized interface for detectors that scan Java source file parse trees<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/55021440.jpg" alt=""></p>
+<p>2、ClassScanner<br>功能：Specialized interface for detectors that scan Java class files<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/63801235.jpg" alt=""></p>
+<p>3、BinaryResourceScanner<br>功能：Specialized interface for detectors that scan binary resource files<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/31784308.jpg" alt=""></p>
+<p>4、ResourceFolderScanner<br>功能：Specialized interface for detectors that scan resource folders (the folder directory itself, not the individual files within it）<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/81593485.jpg" alt=""></p>
+<p>5、XmlScanner<br>功能：Specialized interface for detectors that scan XML files<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/1707982.jpg" alt=""></p>
+<p>6、GradleScanner<br>功能：Specialized interface for detectors that scan Gradle files<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/5157796.jpg" alt=""></p>
+<p>7、OtherFileScanner<br>功能：Specialized interface for detectors that scan other files<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/94526179.jpg" alt=""></p>
+<p><strong>实现自定义Lint规则的过程，实际上就是实现detector的过程，每个detector能够定义1个或多个不同类型的issue。</strong>也就是说，一个detector能够检测多种issue，这些issue在逻辑上是有关联的，但这些issue可以拥有不同的严重程度、描述等，并能够独立地被抑制(suppress，即禁用对该issue的检查）。</p>
+<h2 id="自定义lint实战">自定义lint实战</h2><p>下面简单演示一下开发一个自定义Lint规则的完整流程。  </p>
+<p>【1】在Android Studio中，打开或新建一个工程，然后点击【File -&gt; New -&gt; New Module】，在弹出窗口中选择新建一个Java Library，如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/98524820.jpg" alt=""></p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/27544737.jpg" alt=""></p>
+<p>我们这里把Java Library命名为ljflintrules。</p>
+<p>【2】自定义lint规则需要继承一些特定的类，所以需要在ljflintrules的build.gradle中添加依赖:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">compile</span> <span class="string">'com.android.tools.lint:lint-api:24.3.1'</span></span><br><span class="line"><span class="keyword">compile</span> <span class="string">'com.android.tools.lint:lint-checks:24.3.1'</span></span><br></pre></td></tr></table></figure>
+<p>【3】在ljflintrules中新建一个LoggerUsageDetector类，用来检测用户代码中是否使用了<code>android.util.Log</code>类，如果有，就报告一个issue，代码如下：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">LoggerUsageDetector</span> <span class="keyword">extends</span> <span class="title">Detector</span></span><br><span class="line">        <span class="keyword">implements</span> <span class="title">Detector</span>.<span class="title">ClassScanner</span> </span>&#123;</span><br><span class="line">    public <span class="literal">static</span> <span class="keyword">final</span> Issue ISSUE = Issue.create(<span class="string">"LogUtilsNotUsed"</span>,</span><br><span class="line">            <span class="string">"You must use our `LogUtils`"</span>,</span><br><span class="line">            <span class="string">"Logging should be avoided in production for security and performance reasons. Therefore, we created a LogUtils that wraps all our calls to Logger and disable them for release flavor."</span>,</span><br><span class="line">            Category.MESSAGES,</span><br><span class="line">            <span class="number">9</span>,</span><br><span class="line">            Severity.ERROR,</span><br><span class="line">            <span class="keyword">new</span> Implementation(LoggerUsageDetector.<span class="keyword">class</span>,</span><br><span class="line">                    Scope.CLASS_FILE_SCOPE));</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    public <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; getApplicableCallNames() &#123;</span><br><span class="line">        <span class="keyword">return</span> Arrays.asList(<span class="string">"v"</span>, <span class="string">"d"</span>, <span class="string">"i"</span>, <span class="string">"w"</span>, <span class="string">"e"</span>, <span class="string">"wtf"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    public <span class="built_in">List</span>&lt;<span class="built_in">String</span>&gt; getApplicableMethodNames() &#123;</span><br><span class="line">        <span class="keyword">return</span> Arrays.asList(<span class="string">"v"</span>, <span class="string">"d"</span>, <span class="string">"i"</span>, <span class="string">"w"</span>, <span class="string">"e"</span>, <span class="string">"wtf"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    public <span class="keyword">void</span> checkCall(<span class="annotation">@NonNull</span> ClassContext context,</span><br><span class="line">                          <span class="annotation">@NonNull</span> ClassNode classNode,</span><br><span class="line">                          <span class="annotation">@NonNull</span> MethodNode method,</span><br><span class="line">                          <span class="annotation">@NonNull</span> MethodInsnNode call) &#123;</span><br><span class="line">        <span class="built_in">String</span> owner = call.owner;</span><br><span class="line">        <span class="keyword">if</span> (owner.startsWith(<span class="string">"android/util/Log"</span>)) &#123;</span><br><span class="line">            context.report(ISSUE,</span><br><span class="line">                    method,</span><br><span class="line">                    call,</span><br><span class="line">                    context.getLocation(call),</span><br><span class="line">                    <span class="string">"You must use our `LogUtils`"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码中，我们定义了一个ISSUE，定义时传入的6个参数意义如下：</p>
+<ul>
+<li><code>LogUtilsNotUseds</code>: 我们这条lint规则的id，这个id必须是独一无二的。  </li>
+<li><code>You must use our &#39;LogUtils&#39;</code>：对这条lint规则的简短描述。</li>
+<li><code>Logging should be avoided in production for security and performance reasons. Therefore, we created a LogUtils that wraps all our calls to Logger and disable them for release flavor.</code>：对这条lint规则更详细的解释。</li>
+<li><code>Category.MESSAGES</code>：类别。</li>
+<li><code>9</code>：优先级，必须在1到10之间。</li>
+<li><code>Severity.ERROR</code>：严重程度。其他可用的严重程度还有FATAL、WARNING、INFORMATIONAL、IGNORE。</li>
+<li><code>Implementation</code>：这是连接Detector与Scope的桥梁，其中Detector的功能是寻找issue，而scope定义了在什么范围内查找issue。在我们的例子中，我们需要在字节码级别分析用户有没有使用<code>android.util.Log</code>。</li>
+</ul>
+<p>这个类中针对字节码中的android/util/Log进行了检查，并在发现时报告LogUtilsNotUsed这个issue。你也可以在这个类中定义多个issue，然后在代码逻辑中（比如checkCall方法中）针对不同的情况，抛出不同的issue。也就是说，一个XXXDetector是可以报告多种issue的。<br>如果需要检测更多问题，你也可以定义更多的XXXDetector类。XXXDetector类可以有多个。</p>
+<p>【4】在ljflintrules中新建一个MyIssueRegistry类，它继承自<code>IssueRegistry</code>。这个类用来注册我们自己定义了哪些issue，这样lint在检查代码时才知道要针对哪些issue进行检查。代码如下：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">MyIssueRegistry</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">IssueRegistry</span> &#123;</span></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    public <span class="type">List</span>&lt;<span class="type">Issue</span>&gt; getIssues() &#123;</span><br><span class="line">        <span class="type">System</span>.out.println(<span class="string">"!!!!!!!!!!!!! ljf MyIssueRegistry lint rules works"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="type">Arrays</span>.asList(<span class="type">LoggerUsageDetector</span>.<span class="type">ISSUE</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个类中只有一个方法，就是返回一个List，其中包含了我们自定义的所有issue。<br>这里我们为了能够在控制台中清楚的看到我们自定义的lint规则是否被调用了，所以打印了一行提示信息。    </p>
+<p>【5】对于自定义lint生成的jar，我们必须在它的清单文件中指明它的主类。这里我们通过配置ljflintrules的build.gradle文件来完成这项工作：</p>
+<figure class="highlight puppet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="name">jar</span> &#123;</span><br><span class="line">    <span class="literal">manifest</span> &#123;</span><br><span class="line">        attributes(<span class="string">'Lint-Registry'</span>: <span class="string">'com.ljf.lintrules.MyIssueRegistry'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在，你可以在控制台中通过命令<code>./gradlew ljflintrules:assemble</code>来执行编译任务，就可以输出我们需要的jar文件了。你可以在ljflintrules工程目录的<code>build/libs/</code>下找到ljflintrules.jar。  </p>
+<p>如果你想验证这个jar文件是不是真的有效，可以把它拷贝到<code>~/.android/lint/</code>目录下，然后在终端中输入<code>lint --show LogUtilsNotUsed</code>看看有没有输出我们定义的issue信息，有则表明自定义lint成功，如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/27617933.jpg" alt=""></p>
+<p>测试完后记得把它从<code>~/.android/lint/</code>中删除。</p>
+<p>【6】由于我们要把上一步生成的jar文件包含到一个aar中便于用户使用，所以我们还要在ljflintrules的build.gradle文件中添加以下信息：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">configurations</span> &#123;</span><br><span class="line">    <span class="title">lintJarOutput</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    <span class="title">lintJarOutput</span> files(jar)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">defaultTasks <span class="string">'assemble'</span></span><br></pre></td></tr></table></figure>
+<p>经过以上所有步骤，现在ljflintrules的build.gradle文件看起来是这样的：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">apply plugin: <span class="string">'java'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    <span class="keyword">compile</span> <span class="keyword">fileTree</span>(dir: <span class="string">'libs'</span>, <span class="keyword">include</span>: [<span class="string">'*.jar'</span>])</span><br><span class="line">    <span class="keyword">compile</span> <span class="string">'com.android.tools.lint:lint-api:24.3.1'</span></span><br><span class="line">    <span class="keyword">compile</span> <span class="string">'com.android.tools.lint:lint-checks:24.3.1'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">jar &#123;</span><br><span class="line">    manifest &#123;</span><br><span class="line">        attributes(<span class="string">'Lint-Registry'</span>: <span class="string">'com.ljf.lintrules.MyIssueRegistry'</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">configurations</span> &#123;</span><br><span class="line">    lintJarOutput</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    lintJarOutput files(jar)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">defaultTasks <span class="string">'assemble'</span></span><br></pre></td></tr></table></figure>
+<p>【7】新建一个Android Library项目，命名为ljflintrule_aar，用来输出aar，步骤如下：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/98524820.jpg" alt=""></p>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/8544219.jpg" alt=""></p>
+<p>在ljflintrule_aar的build.gradle的根节点加入以下内容：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span><br><span class="line"> * rules for including "lint.jar" in aar</span><br><span class="line"> */</span></span><br><span class="line"><span class="keyword">configurations</span> &#123;</span><br><span class="line">    lintJarImport</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">dependencies</span> &#123;</span><br><span class="line">    lintJarImport <span class="keyword">project</span>(path: <span class="string">":ljflintrules"</span>, configuration: <span class="string">"lintJarOutput"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">task</span> copyLintJar(type: <span class="keyword">Copy</span>) &#123;</span><br><span class="line">    <span class="keyword">from</span> (<span class="keyword">configurations</span>.lintJarImport) &#123;</span><br><span class="line">        rename &#123;</span><br><span class="line">            String fileName -&gt;</span><br><span class="line">                <span class="string">'lint.jar'</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">into</span> <span class="string">'build/intermediates/lint/'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>.afterEvaluate &#123;</span><br><span class="line">    <span class="keyword">def</span> compileLintTask = <span class="keyword">project</span>.tasks.<span class="keyword">find</span> &#123; it.name == <span class="string">'compileLint'</span> &#125;</span><br><span class="line">    compileLintTask.dependsOn(copyLintJar)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果这时再编译项目，就会在ljflintrule_aar的输出目录中得到一个包含lint.jar的aar文件，这里的lint.jar就是我们在第5步中生成的ljflintrules.jar，只是换了个名字。</p>
+<p>【8】在用户app中使用我们的自定义lint。<br>在用户自己的应用程序module中（我们这里就使用app module），打开app的build.gradle文件，在dependencies中加入以下依赖：  </p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">compile <span class="function"><span class="title">project</span><span class="params">(<span class="string">':ljflintrule_aar'</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>这里我们在app的MainActivity中使用了android自带的Log功能：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword"><span class="keyword">extends</span></span> <span class="title">AppCompatActivity</span> &#123;</span></span><br><span class="line"></span><br><span class="line">    <span class="annotation">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> void onCreate(<span class="type">Bundle</span> savedInstanceState) &#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(<span class="type">R</span>.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        <span class="type">Log</span>.d(<span class="string">"tag"</span>, <span class="string">"dasfadsf"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在终端中，我们执行<code>./gradlew lint</code>来执行lint任务，可以在终端中看到以下输出：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/11713429.jpg" alt=""></p>
+<p>输出中指出发现了1个error和2个warning，并给出了详细报告的地址。</p>
+<p>我们在浏览器中打开html格式的详细报告，如下图所示：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/9825338.jpg" alt=""></p>
+<p>以上8个步骤完整演示了如何自定义lint并使用它。</p>
+<h2 id="小结">小结</h2><p>本文对于自定义Lint规则的介绍主要是集中在总体开发流程，给出了一个简单的实例。在实际开发过程中，我们比较常见的需求是针对xml布局文件、java源代码等内容进行某些检查，受Lint开发API的限制需要用到AST的相关知识，以及lombok.ast开源库。由于lombok.ast开源库几乎无文档可用，所以还是需要花一定时间来阅读这个库的源码，并熟悉SDK自带的Lint源码如何使用这个库。如果你对自定义Lint感兴趣，可以关注下一篇文章的相关介绍。</p>
+</span>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag">#Android</a>
+          
+            <a href="/tags/Lint/" rel="tag">#Lint</a>
+          
+            <a href="/tags/custom-lint-rules/" rel="tag">#custom lint rules</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html" rel="next" title="可缩放时间轴和录像片段选择器的实现">
+                <i class="fa fa-chevron-left"></i> 可缩放时间轴和录像片段选择器的实现
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html" rel="prev" title="浅谈Android自定义Lint规则的实现 （二）">
+                浅谈Android自定义Lint规则的实现 （二） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+        </div>
+
+        
+
+
+        
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html"
+           data-title="浅谈Android自定义Lint规则的实现 （一）" data-url="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">
+      </div>
+    
+  </div>
+
+
+      </div>
+
+      
+        
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" src="/uploads/icon_leehom.jpg" alt="ljfxyj2008" itemprop="image"/>
+          <p class="site-author-name" itemprop="name">ljfxyj2008</p>
+        </div>
+        <p class="site-description motion-element" itemprop="description">记录点滴</p>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">12</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          <div class="site-state-item site-state-categories">
+            <a href="/categories">
+              <span class="site-state-item-count">3</span>
+              <span class="site-state-item-name">分类</span>
+              </a>
+          </div>
+
+          <div class="site-state-item site-state-tags">
+            <a href="/tags">
+              <span class="site-state-item-count">18</span>
+              <span class="site-state-item-name">标签</span>
+              </a>
+          </div>
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/ljfxyj2008" target="_blank">
+                  
+                    <i class="fa fa-github"></i> GitHub
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.facebook.com/ljfxyj2008" target="_blank">
+                  
+                    <i class="fa fa-globe"></i> facebook
+                  
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/u/1743025334" target="_blank">
+                  
+                    <i class="fa fa-weibo"></i> Weibo
+                  
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Android_Lint"><span class="nav-number">1.</span> <span class="nav-text">什么是Android Lint</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android_Lint检查哪些内容"><span class="nav-number">2.</span> <span class="nav-text">Android Lint检查哪些内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置Android_Lint"><span class="nav-number">3.</span> <span class="nav-text">配置Android Lint</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#在Android_Studio中配置Lint"><span class="nav-number">3.1.</span> <span class="nav-text">在Android Studio中配置Lint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置Lint文件"><span class="nav-number">3.2.</span> <span class="nav-text">配置Lint文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在Java源文件或XML源文件中配置lint检查"><span class="nav-number">3.3.</span> <span class="nav-text">在Java源文件或XML源文件中配置lint检查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在Java中配置lint检查"><span class="nav-number">3.3.1.</span> <span class="nav-text">在Java中配置lint检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在XML中配置lint检查"><span class="nav-number">3.3.2.</span> <span class="nav-text">在XML中配置lint检查</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义lint"><span class="nav-number">4.</span> <span class="nav-text">自定义lint</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么需要自定义lint"><span class="nav-number">4.1.</span> <span class="nav-text">为什么需要自定义lint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义lint如何使用"><span class="nav-number">4.2.</span> <span class="nav-text">自定义lint如何使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义lint实现原理"><span class="nav-number">4.3.</span> <span class="nav-text">自定义lint实现原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义lint实战"><span class="nav-number">5.</span> <span class="nav-text">自定义lint实战</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+      
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="icon-next-heart fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ljfxyj2008</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top"></div>
+  </div>
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  
+
+  
+    
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"carrotsight"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+    
+     
+
+
+    
+  
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/fancy-box.js?v=0.4.5.2"></script>
+
+
+  <script type="text/javascript" src="/js/helpers.js?v=0.4.5.2"></script>
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+<script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+<script type="text/javascript" src="/js/motion.js?v=0.4.5.2" id="motion.global"></script>
+
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  
+<script type="text/javascript" src="/js/bootstrap.scrollspy.js?v=0.4.5.2" id="bootstrap.scrollspy.custom"></script>
+
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    motionMiddleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+      if (CONFIG.sidebar === 'post' || CONFIG.sidebar === 'always') {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  <script type="text/javascript" src="/js/bootstrap.js"></script>
+
+  
+  
+
+  
+  
+
+</body>
+</html>
