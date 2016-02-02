@@ -7,7 +7,6 @@ carrotsight.com/2015/10/
 carrotsight.com/2015/10/30
 carrotsight.com/2015/11/13/
 carrotsight.com/2015/java-并发-学习总结.html
-carrotsight.com/about/
 carrotsight.com/2015/otto学习笔记.html
 carrotsight.com/2015/《think-in-java》类型信息-学习笔记.html
 carrotsight.com/category/java
