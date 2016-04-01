@@ -248,6 +248,7 @@ a {
   -ms-transition: all 0.2s ease-in;
   transition: all 0.2s ease-in;
   height: 100%;
+  overflow-y: auto;
 }
 #container .left-col .overlay {
   width: 100%;
@@ -334,9 +335,6 @@ a {
     margin: 0;
     padding-top: 10px;
     border: none;
-  }
-  #container .article-more-link a {
-    float: right;
   }
   #container #viewer-box .viewer-box-l {
     font-size: 14px;
@@ -584,9 +582,6 @@ a {
   #container .ua {
     display: none !important;
   }
-  #container #header .social li:nth-child(5n) {
-    margin-right: 3px;
-  }
 }
 .header-author {
   text-align: center;
@@ -619,24 +614,26 @@ a {
   position: relative;
   overflow: hidden;
   background: #88acdb;
-  -webkit-transition: all 0.2s ease-in;
   -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
   -webkit-box-align: center;
   text-align: center;
 }
 #header .profilepic img {
-  width: 20%;
-  height: 20%;
-  -webkit-border-radius: 50%;
-  border-radius: 50%;
-  opacity: 0;
-  -webkit-transition: all 0.2s ease-in;
-}
-#header .profilepic img.show {
   width: 100%;
   height: 100%;
-  opacity: 1;
+  -webkit-border-radius: 50%;
+  border-radius: 50%;
+  -webkit-animation-duration: 0.4s;
+  -moz-animation-duration: 0.4s;
+  -ms-animation-duration: 0.4s;
+  animation-duration: 0.4s;
+  -webkit-animation-delay: 0.3s;
+  -moz-animation-delay: 0.3s;
+  -ms-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+  -webkit-animation-duration: 0.4s;
+  -webkit-animation-delay: 0.3s;
 }
 #header .profilepic:hover {
   background: #fff;
@@ -727,7 +724,7 @@ a {
   position: relative;
   width: 100%;
   overflow: hidden;
-  min-height: 500px;
+  min-height: 260px;
   font-size: 14px;
 }
 #header .switch-area .switch-wrap {
@@ -761,15 +758,17 @@ a {
 #header .switch-part2 {
   left: 100%;
   top: 20px;
-  overlay-x: hidden;
   overflow-y: auto;
-  max-height: 200px;
+  max-height: 260px;
 }
 #header .switch-part3 {
   left: 200%;
-  line-height: 30px;
+  line-height: 1.6;
+  overflow-y: auto;
+  max-height: 260px;
 }
 #header .switch-part3 .switch-friends-link {
+  display: inline-block;
   margin-right: 9px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -794,11 +793,10 @@ a {
   width: 37px;
   -webkit-border-radius: 50%;
   border-radius: 50%;
-  margin-right: 3px;
-  margin-bottom: 6px;
+  margin: 0 2px 6px;
   font: 23px FontAwesome;
   background: #6f7170;
-  opacity: 0.58;
+  opacity: 0.75;
   text-align: center;
   -webkit-box-shadow: 1px 2px 2px rgba(0,0,0,0.1), 1px 1px 3px rgba(0,0,0,0.3);
   box-shadow: 1px 2px 2px rgba(0,0,0,0.1), 1px 1px 3px rgba(0,0,0,0.3);
@@ -813,10 +811,6 @@ a {
   -moz-transform: scale(1.1);
   -ms-transform: scale(1.1);
   transform: scale(1.1);
-}
-#header .header-nav .social li:nth-child(5n),
-#header .header-nav .social li:last-child {
-  margin-right: 0;
 }
 #header .header-nav .social .新浪微博:before {
   content: '\f18a';
@@ -1105,6 +1099,11 @@ color
 body .ui-tooltip {
   border: 1px solid #fff;
 }
+.pace .pace-progress {
+  background: #77b6ff;
+  -webkit-box-shadow: 0 0 10px rgba(119,182,255,0.7);
+  box-shadow: 0 0 10px rgba(119,182,255,0.7);
+}
 .archives-wrap {
   position: relative;
   margin: 0 30px;
@@ -1254,7 +1253,6 @@ body .ui-tooltip {
   margin-bottom: 5px;
   position: relative;
   background: rgba(255,255,255,0.45);
-  opacity: 0;
   -webkit-transition: all 0.2s ease-in;
 }
 .article.show {
@@ -1373,7 +1371,7 @@ body .ui-tooltip {
 }
 .article-entry blockquote {
   padding: 0.4em 20px;
-  margin-top: 10px;
+  margin: 0.5em auto;
   border-left: 4px solid rgba(147,181,224,0.4);
   background: rgba(255,255,255,0.4);
 }
@@ -1492,6 +1490,9 @@ body .ui-tooltip {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #fff;
 }
+.article-entry .table-area {
+  overflow: auto;
+}
 .article-entry table {
   width: 100%;
   max-width: 65em;
@@ -1569,7 +1570,7 @@ body .ui-tooltip {
   -moz-transition: background 0.3s;
   -ms-transition: background 0.3s;
   transition: background 0.3s;
-  opacity: 0.6;
+  opacity: 0.75;
 }
 .article-more-link a:hover {
   background: #9c9;
@@ -1589,7 +1590,7 @@ body .ui-tooltip {
   width: 100%;
   height: 2.5em;
   margin: 1em auto;
-  background: rgba(158,188,226,0.6);
+  background: rgba(158,188,226,0.75);
 }
 #article-nav:hover {
   background: #93b5e0;
@@ -1653,7 +1654,7 @@ li:hover {
   position: fixed;
   border: none;
   left: 270px;
-  top: 382px;
+  top: 385px;
   background: none;
   font-size: 0.9em;
   font-weight: bold;
@@ -1723,7 +1724,7 @@ li:hover {
 .copyright {
   width: 85%;
   max-width: 45em;
-  margin: 0 auto;
+  margin: 1.2em auto 0;
   padding: 0.5em 1.8em;
   border: 1px solid #d3d3d3;
   font-size: 0.93em;
@@ -1733,7 +1734,7 @@ li:hover {
 }
 .copyright span {
   display: inline-block;
-  margin-right: 1em;
+  width: 5.8em;
   color: #b5b5b5;
   font-weight: bold;
 }
@@ -1744,11 +1745,10 @@ li:hover {
   color: #a3d2a3;
   text-decoration: underline;
 }
-.copyright:hover p .copy-path::after {
-  content: "复制";
+.copyright:hover .fa-clipboard {
+  color: #000;
 }
 .copyright .copy-path {
-  display: inline-block;
   margin-left: 1em;
 }
 .copyright .copy-path:hover {
@@ -2056,6 +2056,8 @@ li:hover {
 .article-entry pre code {
   text-shadow: none;
   padding: 0;
+  background: none;
+  color: #999;
 }
 .article-entry .highlight {
   -webkit-border-radius: 2px;
@@ -2646,7 +2648,7 @@ pre .javascript .function {
   -webkit-border-radius: 0 5px 5px 0;
   border-radius: 0 5px 5px 0;
   margin: 5px 9px 5px 8px;
-  opacity: 0.8;
+  opacity: 0.75;
   font-family: inherit;
 }
 .tagcloud a:hover {
