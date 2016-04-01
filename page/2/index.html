@@ -176,7 +176,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/EventBus/" style="font-size: 15px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Lint/" style="font-size: 15px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/custom-lint-rules/" style="font-size: 15px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/反射/" style="font-size: 10px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
+                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/EventBus/" style="font-size: 15px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Lint/" style="font-size: 15px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/View/" style="font-size: 10px;">View</a> <a href="/tags/custom-lint-rules/" style="font-size: 15px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/反射/" style="font-size: 10px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
                     </div>
                 </section>
                 
@@ -259,6 +259,140 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-2015-9-14-EventBus学习总结" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/14/2015-9-14-EventBus学习总结.html" class="article-date">
+      <time datetime="2015-09-14T12:12:43.000Z" itemprop="datePublished">2015-09-14</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/14/2015-9-14-EventBus学习总结.html">EventBus学习总结</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>这两天对Github上很火的Eventbus进行了学习，查阅了一些博客，写代码做了实验，以此文总结。<br>本文档前面是对EventBus各方面的介绍。如果要学习快速使用，可以直接跳转到后面的<a href="#详细使用实例">详细使用实例</a>部分。</p>
+<p><strong>本文EventBus指的是：greenrobot/EventBus<br>Github上有很多同名项目，不要搞错。</strong><br>EventBus是使用观察者模式来替代Intent、Handler、Broadcast的在Activity、Fragment、Service之间传递消息的机制。能降低组件间的耦合，使代码更简洁。</p>
+<h2 id="概念图">概念图</h2><p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-8-28/38822932.jpg" alt="EventBus概念图"><br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/EventBus/">EventBus</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2015/09/14/2015-9-14-EventBus学习总结.html#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-2015-9-8-《Think-in-Java》并发-学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html" class="article-date">
+      <time datetime="2015-09-08T08:08:15.000Z" itemprop="datePublished">2015-09-08</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html">《Think in Java》并发 - 学习笔记</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>1.Executor允许你管理异步任务的执行，而无须显示地管理线程的生命周期。Executor在Java SE5/6中是启动任务的优选方法。可以使用Executor来代替显示地创建Thread对象。  </p>
+<p>2.ExecutorService知道如何构建恰当的上下文来执行Runnable对象。  </p>
+<p>3.CachedThreadPool在程序执行过程中通常会创建与所需数量相同的线程，然后再它回收旧线程时停止创建新线程，因此它是合理的Executor的首选。只有当这种方式会引发问题时，才需要切换到FixedThreadPool。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/多线程/">多线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/并发/">并发</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
   
     <article id="post-2013-12-2-FLEX无法启动服务因为fml文件损坏" class="article article-type-post" itemscope itemprop="blogPost">
   
