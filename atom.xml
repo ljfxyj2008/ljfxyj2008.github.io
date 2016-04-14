@@ -4,7 +4,7 @@
   <subtitle><![CDATA[记录点滴]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://www.carrotsight.com/"/>
-  <updated>2016-04-14T07:11:47.000Z</updated>
+  <updated>2016-04-14T07:19:41.000Z</updated>
   <id>http://www.carrotsight.com/</id>
   
   <author>
@@ -19,8 +19,8 @@
     <link href="http://www.carrotsight.com/2016/04/14/Android%20Lint%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90.html"/>
     <id>http://www.carrotsight.com/2016/04/14/Android Lint工作原理剖析.html</id>
     <published>2016-04-14T07:10:50.000Z</published>
-    <updated>2016-04-14T07:11:47.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="Android_Lint工作原理剖析">Android Lint工作原理剖析</h1><h2 id="官方对自定义Lint的支持">官方对自定义Lint的支持</h2><p>Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。</p>
+    <updated>2016-04-14T07:19:41.000Z</updated>
+    <content type="html"><![CDATA[<h2 id="官方对自定义Lint的支持">官方对自定义Lint的支持</h2><p>Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。</p>
 <p>Android Studio 2.0 Stable版本已经于2016年4月7日正式发布。除了Instant Run让人眼前一亮，更让人惊喜的是，官方已经悄然把自定义Lint的检查与IDE整合起来了。在此之前，自定义Lint规则只能通过在终端中执行gradle任务来运行，然后生成报告文件。<br>Android Studio 2.0中整合自定义Lint检查的效果如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-4-13/85143697.jpg" alt=""></p>
 <p>图中红线提示的错误是我自定义的Lint规则检查的结果，大意是Activity使用的布局文件应该以“activity_”为前缀进行命名。  </p>
 <p>关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我之前的文章：<br><a href="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现%20（一）.html">浅谈Android自定义Lint规则的实现 （一）</a><br><a href="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现%20（二）.html">浅谈Android自定义Lint规则的实现 （二）</a></p>
@@ -101,7 +101,8 @@
 <p>现在Lint源码（包括Android SDK中的和用户自定义的Lint规则）中的断点就可以调试了。</p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<h1 id="Android_Lint工作原理剖析">Android Lint工作原理剖析</h1><h2 id="官方对自定义Lint的支持">官方对自定义Lint的支持</h2><p>Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质]]>
+    <![CDATA[Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。本文结合源码对其工作原理进行分析。]]>
+    
     </summary>
     
       <category term="Android" scheme="http://www.carrotsight.com/tags/Android/"/>

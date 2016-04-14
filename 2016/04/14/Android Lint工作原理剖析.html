@@ -5,14 +5,12 @@
   
   <title>Android Lint工作原理剖析 | ljfxyj2008风巢</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Android Lint工作原理剖析官方对自定义Lint的支持Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。
-Android Studio 2.0 St">
+  <meta name="description" content="Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。本文结合源码对其工作原理进行分析。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android Lint工作原理剖析">
 <meta property="og:url" content="http://www.carrotsight.com/2016/04/14/Android Lint工作原理剖析.html">
 <meta property="og:site_name" content="ljfxyj2008风巢">
-<meta property="og:description" content="Android Lint工作原理剖析官方对自定义Lint的支持Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。
-Android Studio 2.0 St">
+<meta property="og:description" content="Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。本文结合源码对其工作原理进行分析。">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-13/85143697.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-13/26772828.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-14/7318144.jpg">
@@ -21,11 +19,10 @@ Android Studio 2.0 St">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-14/97287156.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-14/6501806.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-14/70344961.jpg">
-<meta property="og:updated_time" content="2016-04-14T07:11:47.000Z">
+<meta property="og:updated_time" content="2016-04-14T07:19:41.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Lint工作原理剖析">
-<meta name="twitter:description" content="Android Lint工作原理剖析官方对自定义Lint的支持Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。
-Android Studio 2.0 St">
+<meta name="twitter:description" content="Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。本文结合源码对其工作原理进行分析。">
   
     <link rel="alternative" href="/atom.xml" title="ljfxyj2008风巢" type="application/atom+xml">
   
@@ -305,7 +302,7 @@ Android Studio 2.0 St">
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h1 id="Android_Lint工作原理剖析">Android Lint工作原理剖析</h1><h2 id="官方对自定义Lint的支持">官方对自定义Lint的支持</h2><p>Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。</p>
+        <h2 id="官方对自定义Lint的支持">官方对自定义Lint的支持</h2><p>Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。</p>
 <p>Android Studio 2.0 Stable版本已经于2016年4月7日正式发布。除了Instant Run让人眼前一亮，更让人惊喜的是，官方已经悄然把自定义Lint的检查与IDE整合起来了。在此之前，自定义Lint规则只能通过在终端中执行gradle任务来运行，然后生成报告文件。<br>Android Studio 2.0中整合自定义Lint检查的效果如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-4-13/85143697.jpg" alt=""></p>
 <p>图中红线提示的错误是我自定义的Lint规则检查的结果，大意是Activity使用的布局文件应该以“activity_”为前缀进行命名。  </p>
 <p>关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我之前的文章：<br><a href="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现%20（一）.html">浅谈Android自定义Lint规则的实现 （一）</a><br><a href="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现%20（二）.html">浅谈Android自定义Lint规则的实现 （二）</a></p>
@@ -395,7 +392,7 @@ Android Studio 2.0 St">
         <p><span>本文标题:</span><a href="/2016/04/14/Android Lint工作原理剖析.html">Android Lint工作原理剖析</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ljfxyj2008</a></p>
         <p><span>发布时间:</span>2016-04-14, 15:10:50</p>
-        <p><span>最后更新:</span>2016-04-14, 15:11:47</p>
+        <p><span>最后更新:</span>2016-04-14, 15:19:41</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/04/14/Android Lint工作原理剖析.html" title="Android Lint工作原理剖析">http://www.carrotsight.com/2016/04/14/Android Lint工作原理剖析.html</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.carrotsight.com/2016/04/14/Android Lint工作原理剖析.html　　作者: ljfxyj2008" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -425,7 +422,7 @@ Android Studio 2.0 St">
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Android_Lint工作原理剖析"><span class="toc-number">1.</span> <span class="toc-text">Android Lint工作原理剖析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#官方对自定义Lint的支持"><span class="toc-number">1.1.</span> <span class="toc-text">官方对自定义Lint的支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lint工作流程探究"><span class="toc-number">1.2.</span> <span class="toc-text">Lint工作流程探究</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何debug_Lint源码"><span class="toc-number">1.3.</span> <span class="toc-text">如何debug Lint源码</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#官方对自定义Lint的支持"><span class="toc-number">1.</span> <span class="toc-text">官方对自定义Lint的支持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lint工作流程探究"><span class="toc-number">2.</span> <span class="toc-text">Lint工作流程探究</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何debug_Lint源码"><span class="toc-number">3.</span> <span class="toc-text">如何debug Lint源码</span></a></li></ol>
 </div>
 <style>
     .left-col .switch-btn {
