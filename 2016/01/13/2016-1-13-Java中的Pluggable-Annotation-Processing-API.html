@@ -3,17 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>ljfxyj2008风巢</title>
+  <title>Java中的Pluggable Annotation Processing API | ljfxyj2008风巢</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录点滴">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ljfxyj2008风巢">
-<meta property="og:url" content="http://www.carrotsight.com/index.html">
+  <meta name="description" content="什么是Java Annotation注解（Annotation）机制从Java 5开始被引入，它能够向源代码中添加句法（syntactic)元数据。类、方法、变量（variables）、参数（parameters）、包（packages）都可以被注解。与Javadoc标签不同，Java注解（Annotation）能够被反射，因为它们能够被嵌入在编译器生成的class文件中，并且可以被Java虚拟机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中的Pluggable Annotation Processing API">
+<meta property="og:url" content="http://www.carrotsight.com/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html">
 <meta property="og:site_name" content="ljfxyj2008风巢">
-<meta property="og:description" content="记录点滴">
+<meta property="og:description" content="什么是Java Annotation注解（Annotation）机制从Java 5开始被引入，它能够向源代码中添加句法（syntactic)元数据。类、方法、变量（variables）、参数（parameters）、包（packages）都可以被注解。与Javadoc标签不同，Java注解（Annotation）能够被反射，因为它们能够被嵌入在编译器生成的class文件中，并且可以被Java虚拟机">
+<meta property="og:updated_time" content="2016-04-18T11:20:20.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ljfxyj2008风巢">
-<meta name="twitter:description" content="记录点滴">
+<meta name="twitter:title" content="Java中的Pluggable Annotation Processing API">
+<meta name="twitter:description" content="什么是Java Annotation注解（Annotation）机制从Java 5开始被引入，它能够向源代码中添加句法（syntactic)元数据。类、方法、变量（variables）、参数（parameters）、包（packages）都可以被注解。与Javadoc标签不同，Java注解（Annotation）能够被反射，因为它们能够被嵌入在编译器生成的class文件中，并且可以被Java虚拟机">
   
     <link rel="alternative" href="/atom.xml" title="ljfxyj2008风巢" type="application/atom+xml">
   
@@ -32,15 +33,8 @@
   
   <link rel="stylesheet" href="/css/style.css" type="text/css">
   
-      <style> .article { opacity: 0;} </style>
-  
   <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  
-    
-     
-      <meta name="google-site-verification" content="ZHtg9JekZLTEfd78cbcgpsc9Z60YvhXZSPUxrMEvnCA" />
-    
   
   
     <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
@@ -50,8 +44,8 @@
       var yiliaConfig = {
           fancybox: true,
           animate: true,
-          isHome: true,
-          isPost: false,
+          isHome: false,
+          isPost: true,
           isArchive: false,
           isTag: false,
           isCategory: false,
@@ -258,282 +252,7 @@
         </header>                
     </div>
 </nav>
-      <div class="body-wrap">
-  
-    <article id="false-学习笔记：Android中的View" class="article article-type-false" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/04/01/学习笔记：Android中的View.html" class="article-date">
-      <time datetime="2016-04-01T06:59:47.000Z" itemprop="datePublished">2016-04-01</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/04/01/学习笔记：Android中的View.html">学习笔记：Android中的View</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h1 align="center" class="root"><br><a name="3havsr3p3t101hrdlbi9m7usv6">学习笔记：Android中的View</a><br></h1>
-
-<p><a href="http://www.carrotsight.com">返回本站首页</a></p>
-<p>“Android中的View” 知识点学习梳理，包括了View事件的处理、View绘制3大流程等内容。</p>
-<p>用XMind画的思维导图，导出为HTML格式了，点开页面可以查看清晰的图片，以及各部分的导出文字。  </p>
-<p><a href="http://7xle8x.com1.z0.glb.clouddn.com/16-4-1/43527743-Android中的View.xmind">点击这里下载 View知识点 XMind原始文件</a></p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/View/">View</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2016/04/01/学习笔记：Android中的View.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="false-学习笔记：Android的IPC机制" class="article article-type-false" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/03/29/学习笔记：Android的IPC机制.html" class="article-date">
-      <time datetime="2016-03-29T09:57:02.000Z" itemprop="datePublished">2016-03-29</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/03/29/学习笔记：Android的IPC机制.html">学习笔记：Android中的IPC机制</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h1 align="center" class="root"><br><a name="3havsr3p3t101hrdlbi9m7usv6">学习笔记：Android中的IPC机制</a><br></h1>
-
-<p><a href="http://www.carrotsight.com">返回本站首页</a></p>
-<p>“Android中的IPC机制” 知识点学习梳理，包括了Android中常见的几种IPC的总结和对比。</p>
-<p>用XMind画的思维导图，导出为HTML格式了，点开页面可以查看清晰的图片，以及各部分的导出文字。<br>因为图片太大，如果渲染为与本站一致的主题会导致图片看不清，所以本页面未进行样式渲染，比较丑，凑合着看吧。😊</p>
-<p><a href="http://7xle8x.com1.z0.glb.clouddn.com/16-4-1/99061779-Android IPC机制.xmind">点击这里下载 Android中的IPC机制 XMind原始文件</a></p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPC/">IPC</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2016/03/29/学习笔记：Android的IPC机制.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-浅谈Android自定义Lint规则的实现 （二）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html" class="article-date">
-      <time datetime="2016-02-01T03:30:35.000Z" itemprop="datePublished">2016-02-01</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">浅谈Android自定义Lint规则的实现 （二）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Lint/">Lint</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/custom-lint-rules/">custom lint rules</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-浅谈Android自定义Lint规则的实现 （一）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" class="article-date">
-      <time datetime="2016-01-29T03:00:50.000Z" itemprop="datePublished">2016-01-29</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">浅谈Android自定义Lint规则的实现 （一）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。</p>
-<h2 id="什么是Android_Lint">什么是Android Lint</h2><p>Android Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。  </p>
-<p>在Android SDK Tools 16及更高的版本中，Lint工具会自动安装。通过它对Android工程源代码进行扫描和检查，可发现潜在的问题，以便程序员及早修正这个问题。Android Lint提供了命令行方式执行，还与IDE（如Android Studio）进行了集成，并提供了xml和html形式的输出报告。  </p>
-<p>看了上面的介绍可能大家依然很迷惑“这货到底有啥用”，其实我们平时在Android开发过程中一直在享受Lint带来的便利。比如，下面图中的警告和错误提示，相信大家应该很熟悉吧：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/23031672.jpg" alt=""></p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Lint/">Lint</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/custom-lint-rules/">custom lint rules</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-2016-1-13-Java中的Pluggable-Annotation-Processing-API" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-2016-1-13-Java中的Pluggable-Annotation-Processing-API" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
       <a href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html" class="article-date">
@@ -549,12 +268,27 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html">Java中的Pluggable Annotation Processing API</a>
+    <h1 class="article-title" itemprop="name">
+      Java中的Pluggable Annotation Processing API
     </h1>
   
 
       </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Annotation/">Annotation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/反射/">反射</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
       
     
     <div class="article-entry" itemprop="articleBody">
@@ -724,375 +458,157 @@ Priority priority() <span class="keyword">default</span> Priority.MEDIUM;
       
     </div>
     
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Annotation/">Annotation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/反射/">反射</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
   </div>
   
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-可缩放时间轴和录像片段选择器的实现" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html" class="article-date">
-      <time datetime="2015-12-09T06:53:40.000Z" itemprop="datePublished">2015-12-09</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">可缩放时间轴和录像片段选择器的实现</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>最近的工作是做了两个自定义控件：<br>①可以缩放的时间轴<br>②吸附在在时间轴上有两个滑动按钮的录像片段选择器  </p>
-<p>真机测试效果如下面的gif动画所示：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/74682253.jpg" alt=""></p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/时间轴/">时间轴</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html#more">阅读全文 >></a>
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html">Java中的Pluggable Annotation Processing API</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">ljfxyj2008</a></p>
+        <p><span>发布时间:</span>2016-01-13, 17:42:16</p>
+        <p><span>最后更新:</span>2016-04-18, 19:20:20</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html" title="Java中的Pluggable Annotation Processing API">http://www.carrotsight.com/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.carrotsight.com/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html　　作者: ljfxyj2008" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-一个android日志库的实现" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/11/13/一个android日志库的实现.html" class="article-date">
-      <time datetime="2015-11-13T06:12:58.000Z" itemprop="datePublished">2015-11-13</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/13/一个android日志库的实现.html">一个android日志库的实现</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/库项目/">库项目</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/日志/">日志</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2015/11/13/一个android日志库的实现.html#more">阅读全文 >></a>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
         </p>
-      
-      <div class="clearfix"></div>
     </div>
-    
-  </div>
-  
-</article>
 
 
 
-
-
-
-
-
-  
-    <article id="post-FlatBuffers学习总结" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/10/10/FlatBuffers学习总结.html" class="article-date">
-      <time datetime="2015-10-10T13:37:08.000Z" itemprop="datePublished">2015-10-10</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+    <nav id="article-nav">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/10/FlatBuffers学习总结.html">FlatBuffers学习总结</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>据说facebook使用google的黑科技flatbuffers，用来替代传统的json进行数据交换，大大提高了facebook android客户端的效率。于是我在网上查找各种资料学习了一下flatbuffers，参看资料包括GOOGLE官方文档、facebook技术博客、以及其他国内的个人博客，也写了些代码做实验，以此文作为学习总结。</p>
-<h2 id="什么是Google_FlatBuffers">什么是Google FlatBuffers</h2><p>FlatBuffers是一个开源的、跨平台的、高效的、提供了C++/Java接口的序列化工具库。它是Google专门为游戏开发或其他性能敏感的应用程序需求而创建。尤其更适用于移动平台，这些平台上内存大小及带宽相比桌面系统都是受限的，而应用程序比如游戏又有更高的性能要求。它将序列化数据存储在缓存中，这些数据既可以存储在文件中，又可以通过网络原样传输，而不需要任何解析开销。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FlatBuffers/">FlatBuffers</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Google/">Google</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/facebook/">facebook</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2015/10/10/FlatBuffers学习总结.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-2015-9-19-Android编程要注意的安全规范" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html" class="article-date">
-      <time datetime="2015-09-19T11:46:08.000Z" itemprop="datePublished">2015-09-19</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">
+                    浅谈Android自定义Lint规则的实现 （一）
+                </a>
+            </div>
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html">Android编程要注意的安全规范</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。</p>
-<h2 id="Android框架自身的安全性机制">Android框架自身的安全性机制</h2><ol>
-<li>Android应用程序沙盒，把每个app的数据与代码都分隔开。  </li>
-<li>对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  </li>
-<li>加密的文件系统，它能够保护丢失或被盗设备的数据。  </li>
-<li>用户能够授权权限来限制对系统和用户数据的访问。  </li>
-<li>应用程序定义的权限。
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全/">安全</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-2015-9-16-《Think-in-Java》类型信息-–-学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html" class="article-date">
-      <time datetime="2015-09-16T08:22:16.000Z" itemprop="datePublished">2015-09-16</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
         
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">《Think in Java》类型信息 – 学习笔记</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h2 id="Class对象">Class对象</h2><p>Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。<br>每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  </p>
-<p>Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.class来获得。其中，getClass()方法属于根类Object的一部分。”.class”称为<em>类字面常量</em>，他在编译时就会受到检查，所以更安全，也更高效。  </p>
-<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Java/">Java</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reflection/">reflection</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/反射/">反射</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">
+                    可缩放时间轴和录像片段选择器的实现
+                </a>
+            </div>
+        
     </nav>
+
   
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是Java_Annotation"><span class="toc-number">1.</span> <span class="toc-text">什么是Java Annotation</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何实现自定义注解"><span class="toc-number">2.</span> <span class="toc-text">如何实现自定义注解</span></a></li></ol>
+</div>
+<style>
+    .left-col .switch-btn {
+        display: none;
+    }
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+            $(".switch-btn, .switch-area").fadeOut(300);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+            $(".switch-btn, .switch-area").fadeIn(500);
+        }
+    })
+
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+        $(".switch-btn, .switch-area").show();
+    }
+</script>
+
+
+
+
+    <div class="share">
+    <div class="bdsharebuttonbox">
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+    <a href="#" class="bds_copy" data-cmd="copy" title="复制网址"></a>
+    <a href="#" class="bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+    </div>
+    <script>
+        window._bd_share_config={
+            "common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+</div>
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html" data-title="Java中的Pluggable Annotation Processing API" data-url="http://www.carrotsight.com/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"carrotsight"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    <!-- 多说公共JS代码 end -->
+</div>
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" title="上一篇: 浅谈Android自定义Lint规则的实现 （一）">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html" title="下一篇: 可缩放时间轴和录像片段选择器的实现">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/04/01/学习笔记：Android中的View.html">学习笔记：Android中的View</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/29/学习笔记：Android的IPC机制.html">学习笔记：Android中的IPC机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">浅谈Android自定义Lint规则的实现 （二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">浅谈Android自定义Lint规则的实现 （一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html">Java中的Pluggable Annotation Processing API</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">可缩放时间轴和录像片段选择器的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/11/13/一个android日志库的实现.html">一个android日志库的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/10/FlatBuffers学习总结.html">FlatBuffers学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html">Android编程要注意的安全规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">《Think in Java》类型信息 – 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/15/2015-9-15-Otto学习笔记.html">Otto学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/14/2015-9-14-EventBus学习总结.html">EventBus学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html">《Think in Java》并发 - 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html">【FLEX bug:无法启动服务，因为fml文件损坏】的解决办法</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html">Flex中datagrid中checkbox的全选实现</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
 </div>
       <footer id="footer">
     <div class="outer">
