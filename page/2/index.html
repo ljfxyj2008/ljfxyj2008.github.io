@@ -172,7 +172,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Annotation/" style="font-size: 10px;">Annotation</a> <a href="/tags/EventBus/" style="font-size: 13.33px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Lint/" style="font-size: 13.33px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/View/" style="font-size: 10px;">View</a> <a href="/tags/custom-lint-rules/" style="font-size: 13.33px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/反射/" style="font-size: 13.33px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
+                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Annotation/" style="font-size: 10px;">Annotation</a> <a href="/tags/EventBus/" style="font-size: 13.33px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Lint/" style="font-size: 13.33px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/View/" style="font-size: 10px;">View</a> <a href="/tags/custom-lint-rules/" style="font-size: 13.33px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/system-server/" style="font-size: 10px;">system_server</a> <a href="/tags/zygote/" style="font-size: 13.33px;">zygote</a> <a href="/tags/反射/" style="font-size: 13.33px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/源码分析/" style="font-size: 13.33px;">源码分析</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
                     </div>
                 </section>
                 
@@ -255,6 +255,144 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-2015-9-19-Android编程要注意的安全规范" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html" class="article-date">
+      <time datetime="2015-09-19T11:46:08.000Z" itemprop="datePublished">2015-09-19</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html">Android编程要注意的安全规范</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>这两天阅读了一下android developer网站与安全相关的部分，对android编程过程中主要注意的安全细节进行了学习，在此总结一下要点。</p>
+<h2 id="Android框架自身的安全性机制">Android框架自身的安全性机制</h2><ol>
+<li>Android应用程序沙盒，把每个app的数据与代码都分隔开。  </li>
+<li>对各种安全功能进行了强健实现的应用程序框架，如密码学、权限、安全IPC等。  </li>
+<li>加密的文件系统，它能够保护丢失或被盗设备的数据。  </li>
+<li>用户能够授权权限来限制对系统和用户数据的访问。  </li>
+<li>应用程序定义的权限。
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/安全/">安全</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+  
+    <article id="post-2015-9-16-《Think-in-Java》类型信息-–-学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html" class="article-date">
+      <time datetime="2015-09-16T08:22:16.000Z" itemprop="datePublished">2015-09-16</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">《Think in Java》类型信息 – 学习笔记</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id="Class对象">Class对象</h2><p>Class对象是一种特殊的对象，它包含了与类有关的信息。Class对象用来创建类的所有的“常规”对象。Java使用Class对象来执行RTTI（包括类型转换操作）。<br>每当编写并编译一个新类，就会产生一个Class对象（或者说被保存在一个同名的.class文件中）。  </p>
+<p>Class对象的引用可以通过Class.forName()或普通对象的getClass()方法来获取,或类名加上.class来获得。其中，getClass()方法属于根类Object的一部分。”.class”称为<em>类字面常量</em>，他在编译时就会受到检查，所以更安全，也更高效。  </p>
+<p>差别：“.class”不会引起类的初始化，而Class.forName()方法会立即就进行初始化。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reflection/">reflection</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/反射/">反射</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
   
     <article id="post-2015-9-15-Otto学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
   

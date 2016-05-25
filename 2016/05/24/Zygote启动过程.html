@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Zygote启动过程 | ljfxyj2008风巢</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Zygote和system_server是Android系统中最重要的两个进程，任何一个进程的死亡都会导致Java世界的崩溃。其中，zygote由linux系统的1号进程init直接fork而来，而system_server进程由zygote进程fork而来。通过adb shell连接到设备，可以进行验证：
+Zygote本身是一个Native应用程序，与驱动、内核等均无关系。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zygote启动过程">
+<meta property="og:url" content="http://www.carrotsight.com/2016/05/24/Zygote启动过程.html">
+<meta property="og:site_name" content="ljfxyj2008风巢">
+<meta property="og:description" content="Zygote和system_server是Android系统中最重要的两个进程，任何一个进程的死亡都会导致Java世界的崩溃。其中，zygote由linux系统的1号进程init直接fork而来，而system_server进程由zygote进程fork而来。通过adb shell连接到设备，可以进行验证：
+Zygote本身是一个Native应用程序，与驱动、内核等均无关系。">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-5-25/77168217.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-5-23/35686446.jpg">
+<meta property="og:updated_time" content="2016-05-25T08:18:29.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Zygote启动过程">
+<meta name="twitter:description" content="Zygote和system_server是Android系统中最重要的两个进程，任何一个进程的死亡都会导致Java世界的崩溃。其中，zygote由linux系统的1号进程init直接fork而来，而system_server进程由zygote进程fork而来。通过adb shell连接到设备，可以进行验证：
+Zygote本身是一个Native应用程序，与驱动、内核等均无关系。">
+  
+    <link rel="alternative" href="/atom.xml" title="ljfxyj2008风巢" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  
+      <link href="//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet">
+  
+  
+      <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+      <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  
+  <script src="//cdn.bootcss.com/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+  <script>
+      var yiliaConfig = {
+          fancybox: true,
+          animate: false,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false,
+      }
+  </script>
+
+  
+      <script>
+          yiliaConfig.rootUrl = "/";
+      </script>
+  
+
+  
+      <script>
+          var _hmt = _hmt || [];
+          (function() {
+              var hm = document.createElement("script");
+              hm.src = "//hm.baidu.com/hm.js?449259d6f926d9e469b862f243275e59";
+              var s = document.getElementsByTagName("script")[0]; 
+              s.parentNode.insertBefore(hm, s);
+          })();
+      </script>
+  
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/uploads/icon_leehom.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">ljfxyj2008</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">记录点滴</p>
+        
+                
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/memo/">备忘</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <li id="Email"><a class="Email" target="_blank" href="mailto:ljfxyj2008@gmail.com" title="Email"></a></li>
+                            
+                                <li id="GitHub"><a class="GitHub" target="_blank" href="https://github.com/ljfxyj2008" title="GitHub"></a></li>
+                            
+                                <li id="RSS"><a class="RSS" target="_blank" href="/atom.xml" title="RSS"></a></li>
+                            
+                                <li id="Facebook"><a class="Facebook" target="_blank" href="https://www.facebook.com/ljfxyj2008" title="Facebook"></a></li>
+                            
+                                <li id="StackOverflow"><a class="StackOverflow" target="_blank" href="http://stackoverflow.com/users/5788604/ljfxyj2008" title="StackOverflow"></a></li>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Annotation/" style="font-size: 10px;">Annotation</a> <a href="/tags/EventBus/" style="font-size: 13.33px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Lint/" style="font-size: 13.33px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/View/" style="font-size: 10px;">View</a> <a href="/tags/custom-lint-rules/" style="font-size: 13.33px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/system-server/" style="font-size: 10px;">system_server</a> <a href="/tags/zygote/" style="font-size: 13.33px;">zygote</a> <a href="/tags/反射/" style="font-size: 13.33px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/源码分析/" style="font-size: 13.33px;">源码分析</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">专注于Android应用开发</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">ljfxyj2008</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/uploads/icon_leehom.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">ljfxyj2008</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">记录点滴</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/memo/">备忘</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <li id="Email"><a class="Email" target="_blank" href="mailto:ljfxyj2008@gmail.com" title="Email"></a></li>
+                            
+                                <li id="GitHub"><a class="GitHub" target="_blank" href="https://github.com/ljfxyj2008" title="GitHub"></a></li>
+                            
+                                <li id="RSS"><a class="RSS" target="_blank" href="/atom.xml" title="RSS"></a></li>
+                            
+                                <li id="Facebook"><a class="Facebook" target="_blank" href="https://www.facebook.com/ljfxyj2008" title="Facebook"></a></li>
+                            
+                                <li id="StackOverflow"><a class="StackOverflow" target="_blank" href="http://stackoverflow.com/users/5788604/ljfxyj2008" title="StackOverflow"></a></li>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-Zygote启动过程" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/05/24/Zygote启动过程.html" class="article-date">
+      <time datetime="2016-05-24T12:36:52.000Z" itemprop="datePublished">2016-05-24</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Zygote启动过程
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/zygote/">zygote</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码分析/">源码分析</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p><code>Zygote</code>和<code>system_server</code>是Android系统中最重要的两个进程，任何一个进程的死亡都会导致Java世界的崩溃。其中，zygote由linux系统的1号进程init直接fork而来，而system_server进程由zygote进程fork而来。<br>通过adb shell连接到设备，可以进行验证：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-5-25/77168217.jpg" alt=""></p>
+<p>Zygote本身是一个Native应用程序，与驱动、内核等均无关系。<br><a id="more"></a></p>
+<p>Zygote是init进程根据init.rc文件中的配置项创建的，在当前最新的Android源码中，与zygote启动相关的代码不再是直接写在init.rc中，而是在init.rc文件开头以<code>import /init.${ro.zygote}.rc</code>的方式引入，对于不同的平台，引入的{ro.zygote}.rc文件是不同的，如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-5-23/35686446.jpg" alt=""></p>
+<p>这4个文件的区别如下：</p>
+<blockquote>
+<p>①init.zygote32.rc：zygote 进程对应的执行程序是 <code>app_process</code> (纯 32bit 模式)<br>②init.zygote64.rc：zygote 进程对应的执行程序是 <code>app_process64</code> (纯 64bit 模式)<br>③init.zygote32_64.rc：启动两个 zygote 进程 (名为 zygote 和 zygote_secondary)，对应的执行程序分别是 <code>app_process32</code> (主模式)、<code>app_process64</code>。<br>④init.zygote64_32.rc：启动两个 zygote 进程 (名为 zygote 和 zygote_secondary)，对应的执行程序分别是 <code>app_process64</code> (主模式)、<code>app_process32</code>。</p>
+</blockquote>
+<p>打开<code>init.zygote64.rc</code>文件，内容如下：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">service zygote /<span class="keyword">system</span>/bin/app_process64 -Xzygote /<span class="keyword">system</span>/bin <span class="comment">--zygote --start-system-server</span></span><br><span class="line">    class main</span><br><span class="line">    <span class="built_in">socket</span> zygote stream <span class="number">660</span> root <span class="keyword">system</span></span><br><span class="line">    onrestart <span class="built_in">write</span> /sys/android_power/request_state wake</span><br><span class="line">    onrestart <span class="built_in">write</span> /sys/power/state <span class="command"><span class="keyword">on</span></span></span><br><span class="line">    onrestart restart media</span><br><span class="line">    onrestart restart netd</span><br><span class="line">    writepid /dev/cpuset/foreground/tasks /sys/fs/cgroup/stune/foreground/tasks</span><br></pre></td></tr></table></figure>
+<p>而<code>init.zygote32_64.rc</code>的内容如下：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">service zygote /<span class="keyword">system</span>/bin/app_process32 -Xzygote /<span class="keyword">system</span>/bin <span class="comment">--zygote --start-system-server --socket-name=zygote</span></span><br><span class="line">    class main</span><br><span class="line">    <span class="built_in">socket</span> zygote stream <span class="number">660</span> root <span class="keyword">system</span></span><br><span class="line">    onrestart <span class="built_in">write</span> /sys/android_power/request_state wake</span><br><span class="line">    onrestart <span class="built_in">write</span> /sys/power/state <span class="command"><span class="keyword">on</span></span></span><br><span class="line">    onrestart restart media</span><br><span class="line">    onrestart restart netd</span><br><span class="line">    writepid /dev/cpuset/foreground/tasks /sys/fs/cgroup/stune/foreground/tasks</span><br><span class="line"></span><br><span class="line">service zygote_secondary /<span class="keyword">system</span>/bin/app_process64 -Xzygote /<span class="keyword">system</span>/bin <span class="comment">--zygote --socket-name=zygote_secondary</span></span><br><span class="line">    class main</span><br><span class="line">    <span class="built_in">socket</span> zygote_secondary stream <span class="number">660</span> root <span class="keyword">system</span></span><br><span class="line">    onrestart restart zygote</span><br><span class="line">    writepid /dev/cpuset/foreground/tasks /sys/fs/cgroup/stune/foreground/tasks</span><br></pre></td></tr></table></figure>
+<p>可以看到，这两个文件每个service第一行<code>service zygote</code>后面的路径是有区别的，分别是<code>/system/bin/app_process64</code>或是<code>/system/bin/app_process32</code>。这段代码表明，在不同的平台上zygote对应的可执行文件是不同的，在运行过程中app_processXX通过Linux下的pctrl系统调用将自己的名字换成了<code>zygote</code>。</p>
+<p>app_processXX对应的源文件是<code>frameworks/base/cmds/app_process/App_main.cpp</code>，部分代码如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char* const argv[])</span><br><span class="line">&#123;</span><br><span class="line">    /*设置当前进程和子进程不能获取更多权限*/</span><br><span class="line">    if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) &lt; 0) &#123;</span><br><span class="line">        // Older kernels don't understand PR_SET_NO_NEW_PRIVS and return</span><br><span class="line">        // EINVAL. Don't die on such kernels.</span><br><span class="line">        if (errno != EINVAL) &#123;</span><br><span class="line">            LOG_ALWAYS_FATAL("PR_SET_NO_NEW_PRIVS failed: %s", strerror(errno));</span><br><span class="line">            return 12;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /*  </span><br><span class="line">        寻找虚拟机相关参数，argv[0]肯定不是，所以直接忽略它。</span><br><span class="line">        由于我们在init.rc中设置的启动参数为</span><br><span class="line">        -Xzygote /system/bin --zygote --start-system-server</span><br><span class="line">        所以，这里找到的虚拟机参数就是-Xzygote</span><br><span class="line">    */</span><br><span class="line">    AppRuntime runtime(argv[0], computeArgBlockSize(argc, argv));    </span><br><span class="line">    argc--;</span><br><span class="line">    argv++;    </span><br><span class="line">    int i;</span><br><span class="line">    for (i = 0; i &lt; argc; i++) &#123;</span><br><span class="line">        if (argv[i][0] != '-') &#123;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        if (argv[i][1] == '-' &amp;&amp; argv[i][2] == 0) &#123;</span><br><span class="line">            ++i; // Skip --.</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        runtime.addOption(strdup(argv[i]));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    bool zygote = false;</span><br><span class="line">    bool startSystemServer = false;</span><br><span class="line">    bool application = false;</span><br><span class="line">    String8 niceName;</span><br><span class="line">    String8 className;</span><br><span class="line"></span><br><span class="line">    ++i;  /*      `/system/bin`是parent dir，这个参数暂时没有用处，直接跳过   */</span><br><span class="line">    while (i &lt; argc) &#123;</span><br><span class="line">        /* 设置internal arguments */</span><br><span class="line">        const char* arg = argv[i++];</span><br><span class="line">        if (strcmp(arg, "--zygote") == 0) &#123;</span><br><span class="line">            zygote = true;</span><br><span class="line">            niceName = ZYGOTE_NICE_NAME;</span><br><span class="line">        &#125; else if (strcmp(arg, "--start-system-server") == 0) &#123;</span><br><span class="line">            startSystemServer = true;</span><br><span class="line">        &#125; else if (strcmp(arg, "--application") == 0) &#123;</span><br><span class="line">            application = true;</span><br><span class="line">        &#125; else if (strncmp(arg, "--nice-name=", 12) == 0) &#123;</span><br><span class="line">            niceName.setTo(arg + 12);</span><br><span class="line">        &#125; else if (strncmp(arg, "--", 2) != 0) &#123;</span><br><span class="line">            className.setTo(arg);</span><br><span class="line">            break;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            --i;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Vector&lt;String8&gt; args;</span><br><span class="line">    if (!className.isEmpty()) &#123;</span><br><span class="line">        // We're not in zygote mode, the only argument we need to pass</span><br><span class="line">        // to RuntimeInit is the application argument.</span><br><span class="line">        //</span><br><span class="line">        // The Remainder of args get passed to startup class main(). Make</span><br><span class="line">        // copies of them before we overwrite them with the process name.</span><br><span class="line">        args.add(application ? String8("application") : String8("tool"));</span><br><span class="line">        runtime.setClassNameAndArgs(className, argc - i, argv + i);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // We're in zygote mode.</span><br><span class="line">        maybeCreateDalvikCache();</span><br><span class="line"></span><br><span class="line">        if (startSystemServer) &#123;</span><br><span class="line">            args.add(String8("start-system-server"));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        char prop[PROP_VALUE_MAX];</span><br><span class="line">        if (property_get(ABI_LIST_PROPERTY, prop, NULL) == 0) &#123;</span><br><span class="line">            LOG_ALWAYS_FATAL("app_process: Unable to determine ABI list from property %s.",</span><br><span class="line">                ABI_LIST_PROPERTY);</span><br><span class="line">            return 11;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        String8 abiFlag("--abi-list=");</span><br><span class="line">        abiFlag.append(prop);</span><br><span class="line">        args.add(abiFlag);</span><br><span class="line"></span><br><span class="line">        // In zygote mode, pass all remaining arguments to the zygote</span><br><span class="line">        // main() method.</span><br><span class="line">        for (; i &lt; argc; ++i) &#123;</span><br><span class="line">            args.add(String8(argv[i]));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (!niceName.isEmpty()) &#123;</span><br><span class="line">        /*  将传递给runtime对象的启动参数app_process或app_process64替换为"zygote"，</span><br><span class="line">            并把进程名也设置为"zygote" */</span><br><span class="line">        runtime.setArgv0(niceName.string());        </span><br><span class="line">        set_process_name(niceName.string());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (zygote) &#123;</span><br><span class="line">        InitializeNativeLoader();</span><br><span class="line"></span><br><span class="line">        /*  启动java类ZygoteInit，并传入参数args</span><br><span class="line">            zygote仅用来在runtime.start（）函数中区分是否以zygote模式启动 */</span><br><span class="line">        runtime.start("com.android.internal.os.ZygoteInit", args, zygote);</span><br><span class="line">    &#125; else if (className) &#123;</span><br><span class="line">        runtime.start("com.android.internal.os.RuntimeInit", args, zygote);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        fprintf(stderr, "Error: no class name or --zygote supplied.\n");</span><br><span class="line">        app_usage();</span><br><span class="line">        LOG_ALWAYS_FATAL("app_process: no class name or --zygote supplied.");</span><br><span class="line">        return 10;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里很关键的就是<code>runtime.start()</code>方法，runtime是一个AppRuntime对象，而AppRuntime类的大致结构如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> AppRuntime : <span class="keyword">public</span> AndroidRuntime</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    AppRuntime(<span class="keyword">char</span>* argBlockStart, <span class="keyword">const</span> <span class="keyword">size_t</span> argBlockLength)</span><br><span class="line">        : AndroidRuntime(argBlockStart, argBlockLength)&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setClassNameAndArgs</span><span class="params">(<span class="keyword">const</span> String8&amp; className, <span class="keyword">int</span> argc, <span class="keyword">char</span> * <span class="keyword">const</span> *argv)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">onVmCreated</span><span class="params">(JNIEnv* env)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">onStarted</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">onZygoteInit</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">onExit</span><span class="params">(<span class="keyword">int</span> code)</span></span>;    </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以看到，AppRuntime实际上是继承自AndroidRuntime，并且没有override父类的start()方法，说明上面提到的<code>runtime.start()</code>实际是直接调用了AndroidRuntime的start()方法。  </p>
+<p>找到AndroidRuntime.cpp文件，它的start()方法部分代码如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> AndroidRuntime::start(<span class="keyword">const</span> <span class="keyword">char</span>* className, <span class="keyword">const</span> Vector&lt;String8&gt;&amp; options, <span class="keyword">bool</span> zygote)</span><br><span class="line">&#123;</span><br><span class="line">    ALOGD(<span class="string">"&gt;&gt;&gt;&gt;&gt;&gt; START %s uid %d &lt;&lt;&lt;&lt;&lt;&lt;\n"</span>,</span><br><span class="line">            className != <span class="literal">NULL</span> ? className : <span class="string">"(unknown)"</span>, getuid());</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">const</span> String8 <span class="title">startSystemServer</span><span class="params">(<span class="string">"start-system-server"</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span><br><span class="line">     * 'startSystemServer == true' means runtime is obsolete and not run from</span><br><span class="line">     * init.rc anymore, so we print out the boot start event here.</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; options.size(); ++i) &#123;</span><br><span class="line">        <span class="keyword">if</span> (options[i] == startSystemServer) &#123;</span><br><span class="line">           <span class="comment">/* track our progress through the boot sequence */</span></span><br><span class="line">           <span class="keyword">const</span> <span class="keyword">int</span> LOG_BOOT_PROGRESS_START = <span class="number">3000</span>;</span><br><span class="line">           LOG_EVENT_LONG(LOG_BOOT_PROGRESS_START,  ns2ms(systemTime(SYSTEM_TIME_MONOTONIC)));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 如果找不到环境变量ANDROID_ROOT，则新增环境变量ANDROID_ROOT值为"/system" */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* rootDir = getenv(<span class="string">"ANDROID_ROOT"</span>);</span><br><span class="line">    <span class="keyword">if</span> (rootDir == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        rootDir = <span class="string">"/system"</span>;</span><br><span class="line">        <span class="keyword">if</span> (!hasDir(<span class="string">"/system"</span>)) &#123;</span><br><span class="line">            LOG_FATAL(<span class="string">"No root directory specified, and /android does not exist."</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        setenv(<span class="string">"ANDROID_ROOT"</span>, rootDir, <span class="number">1</span>);</span><br><span class="line">    &#125;    </span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ①创建虚拟机 */</span></span><br><span class="line">    JniInvocation jni_invocation;</span><br><span class="line">    jni_invocation.Init(<span class="literal">NULL</span>);</span><br><span class="line">    JNIEnv* env;</span><br><span class="line">    <span class="keyword">if</span> (startVm(&amp;mJavaVM, &amp;env, zygote) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    onVmCreated(env);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* ②注册JNI函数 */</span></span><br><span class="line">    <span class="keyword">if</span> (startReg(env) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        ALOGE(<span class="string">"Unable to register all android natives\n"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 创建一个String数组来存放启动参数 */</span></span><br><span class="line">    jclass stringClass;</span><br><span class="line">    jobjectArray strArray;</span><br><span class="line">    jstring classNameStr;</span><br><span class="line"></span><br><span class="line">    stringClass = env-&gt;FindClass(<span class="string">"java/lang/String"</span>);</span><br><span class="line">    assert(stringClass != <span class="literal">NULL</span>);</span><br><span class="line">    strArray = env-&gt;NewObjectArray(options.size() + <span class="number">1</span>, stringClass, <span class="literal">NULL</span>);</span><br><span class="line">    assert(strArray != <span class="literal">NULL</span>);</span><br><span class="line">    classNameStr = env-&gt;NewStringUTF(className);</span><br><span class="line">    assert(classNameStr != <span class="literal">NULL</span>);</span><br><span class="line">    env-&gt;SetObjectArrayElement(strArray, <span class="number">0</span>, classNameStr);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; options.size(); ++i) &#123;</span><br><span class="line">        jstring optionsStr = env-&gt;NewStringUTF(options.itemAt(i).<span class="built_in">string</span>());</span><br><span class="line">        assert(optionsStr != <span class="literal">NULL</span>);</span><br><span class="line">        env-&gt;SetObjectArrayElement(strArray, i + <span class="number">1</span>, optionsStr);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* </span><br><span class="line">         ③这里的className值为"com.android.internal.os.ZygoteInit"。</span><br><span class="line">         首先使用GetStaticMethodID（）方法查找ZygoteInit类的main()方法，</span><br><span class="line">         如果main()方法存在，则使用CallStaticVoidMethod()方法来调用ZygoteInit类的main()方法，</span><br><span class="line">         从此，我们从Navtive世界进入java世界。</span><br><span class="line">         本线程会成为虚拟机主线程，并且不会return，直到虚拟机退出。</span><br><span class="line">     */</span></span><br><span class="line">    <span class="keyword">char</span>* slashClassName = toSlashClassName(className);</span><br><span class="line">    jclass startClass = env-&gt;FindClass(slashClassName);</span><br><span class="line">    <span class="keyword">if</span> (startClass == <span class="literal">NULL</span>) &#123;</span><br><span class="line">        ALOGE(<span class="string">"JavaVM unable to locate class '%s'\n"</span>, slashClassName);</span><br><span class="line">        <span class="comment">/* keep going */</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        jmethodID startMeth = env-&gt;GetStaticMethodID(startClass, <span class="string">"main"</span>,</span><br><span class="line">            <span class="string">"([Ljava/lang/String;)V"</span>);</span><br><span class="line">        <span class="keyword">if</span> (startMeth == <span class="literal">NULL</span>) &#123;</span><br><span class="line">            ALOGE(<span class="string">"JavaVM unable to find main() in '%s'\n"</span>, className);</span><br><span class="line">            <span class="comment">/* keep going */</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            env-&gt;CallStaticVoidMethod(startClass, startMeth, strArray);</span><br><span class="line"></span><br><span class="line">    ......</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">free</span>(slashClassName);</span><br><span class="line"></span><br><span class="line">    ALOGD(<span class="string">"Shutting down VM\n"</span>);</span><br><span class="line">    <span class="keyword">if</span> (mJavaVM-&gt;DetachCurrentThread() != JNI_OK)</span><br><span class="line">        ALOGW(<span class="string">"Warning: unable to detach main thread\n"</span>);</span><br><span class="line">    <span class="keyword">if</span> (mJavaVM-&gt;DestroyJavaVM() != <span class="number">0</span>)</span><br><span class="line">        ALOGW(<span class="string">"Warning: VM did not shut down cleanly\n"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码包含了3个关键步骤，即：<br>①创建虚拟机<br>②注册JNI函数<br>③调用com.android.internal.os.ZygoteInit的main()方法，进入Java世界  </p>
+<p>com.android.internal.os.ZygoteInit的main()方法是从native世界进入Java世界的起点。既然此方法如此重要，那么就看看它的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ZygoteInit.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String argv[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        ......</span><br><span class="line">        </span><br><span class="line">        <span class="comment">/* ①注册zygote使用的socket */</span></span><br><span class="line">        registerZygoteSocket(socketName);</span><br><span class="line">        EventLog.writeEvent(LOG_BOOT_PROGRESS_PRELOAD_START,</span><br><span class="line">            SystemClock.uptimeMillis());</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* ②预加载类和资源 */</span></span><br><span class="line">        preload();</span><br><span class="line">        </span><br><span class="line">        ......</span><br><span class="line">        </span><br><span class="line">        <span class="comment">/* ③启动system_server进程 */</span></span><br><span class="line">        <span class="keyword">if</span> (startSystemServer) &#123;</span><br><span class="line">            startSystemServer(abiList, socketName);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ......</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* ④运行zygote进程的select循环，当有新的连接请求时就接受 */</span></span><br><span class="line">        runSelectLoop(abiList);</span><br><span class="line"></span><br><span class="line">        closeServerSocket();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (MethodAndArgsCaller caller) &#123;</span><br><span class="line">        <span class="comment">/* ⑤在system_serer进程中，以反射方式调用SystemServer类的main方法 */</span></span><br><span class="line">        caller.run();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RuntimeException ex) &#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"Zygote died with exception"</span>, ex);</span><br><span class="line">        closeServerSocket();</span><br><span class="line">        <span class="keyword">throw</span> ex;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码有5个关键步骤都已标出。<br>①注册socket的代码比较简单，如下：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">registerZygoteSocket</span><span class="params">(String socketName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sServerSocket == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> fileDesc;</span><br><span class="line">        <span class="keyword">final</span> String fullSocketName = ANDROID_SOCKET_PREFIX + socketName;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            String env = System.getenv(fullSocketName);</span><br><span class="line">            fileDesc = Integer.parseInt(env);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(fullSocketName + <span class="string">" unset or invalid"</span>, ex);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            FileDescriptor fd = <span class="keyword">new</span> FileDescriptor();</span><br><span class="line">            fd.setInt$(fileDesc);</span><br><span class="line">            sServerSocket = <span class="keyword">new</span> LocalServerSocket(fd);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(</span><br><span class="line">                    <span class="string">"Error binding to local socket '"</span> + fileDesc + <span class="string">"'"</span>, ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>②预加载类的preload()方法代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">preload</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Log.d(TAG, <span class="string">"begin preload"</span>);</span><br><span class="line">    preloadClasses();</span><br><span class="line">    preloadResources();</span><br><span class="line">    preloadOpenGL();</span><br><span class="line">    preloadSharedLibraries();</span><br><span class="line">    preloadTextResources();</span><br><span class="line">    <span class="comment">// Ask the WebViewFactory to do any initialization that must run in the zygote process,</span></span><br><span class="line">    <span class="comment">// for memory sharing purposes.</span></span><br><span class="line">    WebViewFactory.prepareWebViewInZygote();</span><br><span class="line">    Log.d(TAG, <span class="string">"end preload"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，这个方法的工作不少，包括预加载类、资源、OpenGL、共享库、文本资源、WebView等。<br>其中，预加载类这一步会去加载<code>/system/etc/preloaded-classes</code>文件中的类，该文件内容如下：</p>
+<blockquote>
+<p>…<br>android.graphics.Bitmap<br>android.graphics.Bitmap$1<br>android.graphics.Bitmap$BitmapFinalizer<br>android.graphics.Bitmap$Config<br>android.graphics.BitmapFactory<br>android.graphics.BitmapFactory$Options<br>android.graphics.BitmapRegionDecoder<br>android.graphics.BitmapShader<br>android.graphics.BlurMaskFilter<br>android.graphics.Camera<br>android.graphics.Canvas<br>android.graphics.Canvas$CanvasFinalizer<br>android.graphics.Canvas$EdgeType<br>android.graphics.CanvasProperty<br>android.graphics.Color<br>android.graphics.ColorFilter<br>android.graphics.ColorMatrixColorFilter<br>android.graphics.ComposePathEffect<br>android.graphics.ComposeShader<br>android.graphics.CornerPathEffect<br>android.graphics.DashPathEffect<br>…</p>
+</blockquote>
+<p>而这个preloaded-classes文件总共有3825行，可见预加载这一步会非常耗时。</p>
+<p>③调用startSystemServer(abiList, socketName)方法创建system_server进程。system_server是framework的核心，如果它死了，就会导致zygote自杀。下面是startSystemServer()方法的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">startSystemServer</span><span class="params">(String abiList, String socketName)</span></span><br><span class="line">        <span class="keyword">throws</span> MethodAndArgsCaller, RuntimeException </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> capabilities = posixCapabilitiesAsBits(</span><br><span class="line">        OsConstants.CAP_BLOCK_SUSPEND,</span><br><span class="line">        OsConstants.CAP_KILL,</span><br><span class="line">        OsConstants.CAP_NET_ADMIN,</span><br><span class="line">        OsConstants.CAP_NET_BIND_SERVICE,</span><br><span class="line">        OsConstants.CAP_NET_BROADCAST,</span><br><span class="line">        OsConstants.CAP_NET_RAW,</span><br><span class="line">        OsConstants.CAP_SYS_MODULE,</span><br><span class="line">        OsConstants.CAP_SYS_NICE,</span><br><span class="line">        OsConstants.CAP_SYS_RESOURCE,</span><br><span class="line">        OsConstants.CAP_SYS_TIME,</span><br><span class="line">        OsConstants.CAP_SYS_TTY_CONFIG</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">/* 硬编码相关启动参数 */</span></span><br><span class="line">    String args[] = &#123;</span><br><span class="line">        <span class="string">"--setuid=1000"</span>,</span><br><span class="line">        <span class="string">"--setgid=1000"</span>,</span><br><span class="line">        <span class="string">"--setgroups=1001,1002,1003,1004,1005,1006,1007,1008,1009,1010,1018,1021,1032,3001,3002,3003,3006,3007"</span>,</span><br><span class="line">        <span class="string">"--capabilities="</span> + capabilities + <span class="string">","</span> + capabilities,</span><br><span class="line">        <span class="string">"--nice-name=system_server"</span>,<span class="comment">//设置进程名为system_server</span></span><br><span class="line">        <span class="string">"--runtime-args"</span>,</span><br><span class="line">        <span class="string">"com.android.server.SystemServer"</span>,<span class="comment">//实际启动的类</span></span><br><span class="line">    &#125;;</span><br><span class="line">    ZygoteConnection.Arguments parsedArgs = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> pid;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        parsedArgs = <span class="keyword">new</span> ZygoteConnection.Arguments(args);</span><br><span class="line">        ZygoteConnection.applyDebuggerSystemProperty(parsedArgs);</span><br><span class="line">        ZygoteConnection.applyInvokeWithSystemProperty(parsedArgs);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* fork一个子进程，也就是system_server进程 */</span></span><br><span class="line">        pid = Zygote.forkSystemServer(</span><br><span class="line">                parsedArgs.uid, parsedArgs.gid,</span><br><span class="line">                parsedArgs.gids,</span><br><span class="line">                parsedArgs.debugFlags,</span><br><span class="line">                <span class="keyword">null</span>,</span><br><span class="line">                parsedArgs.permittedCapabilities,</span><br><span class="line">                parsedArgs.effectiveCapabilities);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException ex) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(ex);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 对于子进程，也就是system_server，进入下面的代码 */</span></span><br><span class="line">    <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">/* 参考本文最开头的init.zygote32_64.rc文件，会启动2个zygote，第二个的名字是"zygote_secondary" */</span></span><br><span class="line">        <span class="keyword">if</span> (hasSecondZygote(abiList)) &#123; </span><br><span class="line">            waitForSecondaryZygote(socketName);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* 把剩下的工作交给system_server进程处理 */</span></span><br><span class="line">        handleSystemServerProcess(parsedArgs);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的代码可以看到，通过调用<code>Zygote.forkSystemServer()</code>方法，zygote分裂出了一个system_server进程。</p>
+<p>④zygote从startSystemServer()方法返回后，接着会调用runSelectLoop()方法，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">runSelectLoop</span><span class="params">(String abiList)</span> <span class="keyword">throws</span> MethodAndArgsCaller </span>&#123;</span><br><span class="line">    ArrayList&lt;FileDescriptor&gt; fds = <span class="keyword">new</span> ArrayList&lt;FileDescriptor&gt;();</span><br><span class="line">    ArrayList&lt;ZygoteConnection&gt; peers = <span class="keyword">new</span> ArrayList&lt;ZygoteConnection&gt;();</span><br><span class="line"></span><br><span class="line">    fds.add(sServerSocket.getFileDescriptor());</span><br><span class="line">    peers.add(<span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">        StructPollfd[] pollFds = <span class="keyword">new</span> StructPollfd[fds.size()];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; pollFds.length; ++i) &#123;</span><br><span class="line">            pollFds[i] = <span class="keyword">new</span> StructPollfd();</span><br><span class="line">            pollFds[i].fd = fds.get(i);</span><br><span class="line">            pollFds[i].events = (<span class="keyword">short</span>) POLLIN;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Os.poll(pollFds, -<span class="number">1</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ErrnoException ex) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"poll failed"</span>, ex);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = pollFds.length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; --i) &#123;</span><br><span class="line">            <span class="keyword">if</span> ((pollFds[i].revents &amp; POLLIN) == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">/* 等待并接受客户端的连接请求 */</span></span><br><span class="line">                ZygoteConnection newPeer = acceptCommandPeer(abiList);</span><br><span class="line">                peers.add(newPeer);</span><br><span class="line">                fds.add(newPeer.getFileDesciptor());</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">/* 将客户端的后续请求交给ZygoteConnection的runOnce()方法处理 */</span></span><br><span class="line">                <span class="keyword">boolean</span> done = peers.get(i).runOnce();</span><br><span class="line">                <span class="keyword">if</span> (done) &#123;</span><br><span class="line">                    peers.remove(i);</span><br><span class="line">                    fds.remove(i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>⑤在catch到MethodAndArgsCaller异常后，此时会处于system_serer进程中，以反射方式调用SystemServer类的main方法。这一步对于system_server的启动是至关重要的一步，会在下一篇《system_server启动过程》中详细分析。</p>
+<p>《深入理解Android：卷I》对zygote的总结非常精辟：</p>
+<blockquote>
+<p>zygote是在Android系统中创建java世界的盘古，它创建了第一个java虚拟机，同时它又是女娲，它成功地繁殖了framework的核心system_server进程，下面是zygote创建java世界的步骤：<br>◼︎第一天：创建AppRuntime对象，并调用它的start。此后的活动则由AppRuntime来控制。<br>◼︎第二天：调用startVm创建Java虚拟机，然后调用startReg来注册JNI函数。<br>◼︎第三天：通过JNI调用com.android.internal.os.ZygoteInit类的main函数，从此进入java世界。然而在这个世界刚开创的时候，什么东西都没有。<br>◼︎第四天：调用registerZygoteSocket。通过这个函数，它可以相应子孙后代的请求。同时zygote调用prelaod()为Java世界添砖加瓦。<br>◼︎第五天：zygote觉得自己的工作压力太大，便通过调用startSystemServer分裂一个子进程system_server来为Java世界服务。<br>◼︎第六天：zygote完成了Java世界的初创工作，它已经很满足了。下一步该做的就是调用runSelectLoopMode后，便沉沉睡去了。<br>以后的日子：zygote随时守护在我们的周围，当接收到子孙后代的请求时，它会随时醒来，为它们工作。</p>
+</blockquote>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2016/05/24/Zygote启动过程.html">Zygote启动过程</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">ljfxyj2008</a></p>
+        <p><span>发布时间:</span>2016-05-24, 20:36:52</p>
+        <p><span>最后更新:</span>2016-05-25, 16:18:29</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2016/05/24/Zygote启动过程.html" title="Zygote启动过程">http://www.carrotsight.com/2016/05/24/Zygote启动过程.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.carrotsight.com/2016/05/24/Zygote启动过程.html　　作者: ljfxyj2008" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2016/05/25/system_server启动过程.html">
+                    System_server启动过程
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2016/04/01/学习笔记：Android中的View.html">
+                    学习笔记：Android中的View
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    
+</div>
+<style>
+    .left-col .switch-btn {
+        display: none;
+    }
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+            $(".switch-btn, .switch-area").fadeOut(300);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+            $(".switch-btn, .switch-area").fadeIn(500);
+        }
+    })
+
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+        $(".switch-btn, .switch-area").show();
+    }
+</script>
+
+
+
+
+    <div class="share">
+    <div class="bdsharebuttonbox">
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+    <a href="#" class="bds_copy" data-cmd="copy" title="复制网址"></a>
+    <a href="#" class="bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+    </div>
+    <script>
+        window._bd_share_config={
+            "common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+</div>
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="2016/05/24/Zygote启动过程.html" data-title="Zygote启动过程" data-url="http://www.carrotsight.com/2016/05/24/Zygote启动过程.html"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"carrotsight"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    <!-- 多说公共JS代码 end -->
+</div>
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2016/05/25/system_server启动过程.html" title="上一篇: System_server启动过程">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2016/04/01/学习笔记：Android中的View.html" title="下一篇: 学习笔记：Android中的View">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/05/25/system_server启动过程.html">System_server启动过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/24/Zygote启动过程.html">Zygote启动过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/01/学习笔记：Android中的View.html">学习笔记：Android中的View</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/29/学习笔记：Android的IPC机制.html">学习笔记：Android中的IPC机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">浅谈Android自定义Lint规则的实现 （二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">浅谈Android自定义Lint规则的实现 （一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html">Java中的Pluggable Annotation Processing API</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">可缩放时间轴和录像片段选择器的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/11/13/一个android日志库的实现.html">一个android日志库的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/10/FlatBuffers学习总结.html">FlatBuffers学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html">Android编程要注意的安全规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">《Think in Java》类型信息 – 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/15/2015-9-15-Otto学习笔记.html">Otto学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/14/2015-9-14-EventBus学习总结.html">EventBus学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html">《Think in Java》并发 - 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html">【FLEX bug:无法启动服务，因为fml文件损坏】的解决办法</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html">Flex中datagrid中checkbox的全选实现</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2016 ljfxyj2008
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题">Yelee</a> by MOxFIVE
+            </div>
+        </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.1.22/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 3;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-73957282-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+
+    <script src="//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
