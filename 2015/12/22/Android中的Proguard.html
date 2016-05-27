@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android中的Proguard | ljfxyj2008风巢</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是ProGuardProGuard是一款免费的Java class文件收缩器、优化器、混淆器和预校验器。ProGuard 已集成到 Android 构建系统，它通过移除无用的代码以及使用语义隐晦的名称来重命名类、字段和方法，从而达到压缩、优化和混淆代码的目的。最终您将获得一个较小的 .apk 文件，此文件更难于进行反向工程。由于 ProGuard 会使应用更难于进行反向工程，因此当应用使用对安">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android中的Proguard">
+<meta property="og:url" content="http://www.carrotsight.com/2015/12/22/Android中的Proguard.html">
+<meta property="og:site_name" content="ljfxyj2008风巢">
+<meta property="og:description" content="什么是ProGuardProGuard是一款免费的Java class文件收缩器、优化器、混淆器和预校验器。ProGuard 已集成到 Android 构建系统，它通过移除无用的代码以及使用语义隐晦的名称来重命名类、字段和方法，从而达到压缩、优化和混淆代码的目的。最终您将获得一个较小的 .apk 文件，此文件更难于进行反向工程。由于 ProGuard 会使应用更难于进行反向工程，因此当应用使用对安">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-17/95797670.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-21/47337390.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-22/75237673.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-21/15237497.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-22/93038934.jpg">
+<meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/15-12-22/38493078.jpg">
+<meta property="og:updated_time" content="2016-05-27T03:31:28.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android中的Proguard">
+<meta name="twitter:description" content="什么是ProGuardProGuard是一款免费的Java class文件收缩器、优化器、混淆器和预校验器。ProGuard 已集成到 Android 构建系统，它通过移除无用的代码以及使用语义隐晦的名称来重命名类、字段和方法，从而达到压缩、优化和混淆代码的目的。最终您将获得一个较小的 .apk 文件，此文件更难于进行反向工程。由于 ProGuard 会使应用更难于进行反向工程，因此当应用使用对安">
+  
+    <link rel="alternative" href="/atom.xml" title="ljfxyj2008风巢" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+  
+      <link href="//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css" rel="stylesheet">
+  
+  
+      <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+      <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  
+  <script src="//cdn.bootcss.com/jquery/1.9.1/jquery.min.js" type="text/javascript"></script>
+  <script>
+      var yiliaConfig = {
+          fancybox: true,
+          animate: false,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false,
+      }
+  </script>
+
+  
+      <script>
+          yiliaConfig.rootUrl = "/";
+      </script>
+  
+
+  
+      <script>
+          var _hmt = _hmt || [];
+          (function() {
+              var hm = document.createElement("script");
+              hm.src = "//hm.baidu.com/hm.js?449259d6f926d9e469b862f243275e59";
+              var s = document.getElementsByTagName("script")[0]; 
+              s.parentNode.insertBefore(hm, s);
+          })();
+      </script>
+  
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/uploads/icon_leehom.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">ljfxyj2008</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">记录点滴</p>
+        
+                
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/memo/">备忘</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <li id="Email"><a class="Email" target="_blank" href="mailto:ljfxyj2008@gmail.com" title="Email"></a></li>
+                            
+                                <li id="GitHub"><a class="GitHub" target="_blank" href="https://github.com/ljfxyj2008" title="GitHub"></a></li>
+                            
+                                <li id="RSS"><a class="RSS" target="_blank" href="/atom.xml" title="RSS"></a></li>
+                            
+                                <li id="Facebook"><a class="Facebook" target="_blank" href="https://www.facebook.com/ljfxyj2008" title="Facebook"></a></li>
+                            
+                                <li id="StackOverflow"><a class="StackOverflow" target="_blank" href="http://stackoverflow.com/users/5788604/ljfxyj2008" title="StackOverflow"></a></li>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Annotation/" style="font-size: 10px;">Annotation</a> <a href="/tags/EventBus/" style="font-size: 13.33px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Lint/" style="font-size: 13.33px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/Proguard/" style="font-size: 10px;">Proguard</a> <a href="/tags/View/" style="font-size: 10px;">View</a> <a href="/tags/custom-lint-rules/" style="font-size: 13.33px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/system-server/" style="font-size: 10px;">system_server</a> <a href="/tags/zygote/" style="font-size: 13.33px;">zygote</a> <a href="/tags/反射/" style="font-size: 13.33px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/源码分析/" style="font-size: 13.33px;">源码分析</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">专注于Android应用开发</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">ljfxyj2008</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/uploads/icon_leehom.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">ljfxyj2008</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">记录点滴</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/memo/">备忘</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <li id="Email"><a class="Email" target="_blank" href="mailto:ljfxyj2008@gmail.com" title="Email"></a></li>
+                            
+                                <li id="GitHub"><a class="GitHub" target="_blank" href="https://github.com/ljfxyj2008" title="GitHub"></a></li>
+                            
+                                <li id="RSS"><a class="RSS" target="_blank" href="/atom.xml" title="RSS"></a></li>
+                            
+                                <li id="Facebook"><a class="Facebook" target="_blank" href="https://www.facebook.com/ljfxyj2008" title="Facebook"></a></li>
+                            
+                                <li id="StackOverflow"><a class="StackOverflow" target="_blank" href="http://stackoverflow.com/users/5788604/ljfxyj2008" title="StackOverflow"></a></li>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-Android中的Proguard" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/12/22/Android中的Proguard.html" class="article-date">
+      <time datetime="2015-12-22T06:21:56.000Z" itemprop="datePublished">2015-12-22</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android中的Proguard
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Proguard/">Proguard</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="什么是ProGuard">什么是ProGuard</h1><p>ProGuard是一款免费的Java class文件收缩器、优化器、混淆器和预校验器。<br>ProGuard 已集成到 Android 构建系统，它通过移除无用的代码以及使用语义隐晦的名称来重命名类、字段和方法，从而达到压缩、优化和混淆代码的目的。最终您将获得一个较小的 .apk 文件，此文件更难于进行反向工程。由于 ProGuard 会使应用更难于进行反向工程，因此当应用使用对安全性要求极高的功能时（例如，当您向应用授予许可时），您必须使用此工具。当您在调试模式下构建应用时，就无需处理混淆后的代码。是否运行 ProGuard 完全由您决定。<br>Proguard通过删除代码中在运行期间不是绝对必要的信息，来防止静态分析。相比于把代码按照它原来的样子呈现出来，这已经前进了一大步，但它仍然是一种被动的方法。<br>ProGuard的提供者同时提供了另外两种针对Android平台的更高级的工具：Dexguard和Dexguard Enterprise，能够抵御静态分析和动态分析。它们兼容ProGuard的配置，并为额外的功能提供了额外的选项。如果你需要更高的安全性来防止你的代码被逆向分析，可以尝试这两个工具，不过它们是收费的。  </p>
+<p>三者的对比如下：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-17/95797670.jpg" alt=""></p>
+<a id="more"></a>
+<h1 id="工作流程">工作流程</h1><p>ProGuard的功能包含收缩(shrink)、优化、混淆、预校验4个步骤，每一步的具体工作如下：</p>
+<ul>
+<li>收缩（shrink）：检测和删除未使用的类、字段、方法、属性。ProGuard从这些种子开始递归决定哪些类以及类成员是被使用的。所有其他的类和类成员都被丢弃。</li>
+<li>优化（optimization）：分析和优化各个方法的字节码。ProGuard更进一步优化代码。除了其他的一些优化操作外，还把不是入口点的类和方法变成private、static或者final，把未使用过的参数删除，把某些方法变成内联的（inline）。</li>
+<li>混淆（obfuscation）：把剩下（即非入口点）的类、字段、方法重命名为简短而无意义的名字。在整个处理流程中，保持（keeping）入口点可以确保它们仍然能够被用原来的名字访问。</li>
+<li>预校验（preverification）：向class中添加预校验信息，这对Java Micro Edition来说是必须的，同时也能够提高代码在Jave 6上的启动速度。预校验步骤是唯一不需要知道哪些是入口点的一个步骤。</li>
+</ul>
+<p><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-21/47337390.jpg" alt=""></p>
+<p>其中收缩、优化、混淆这3步使得代码体积更小、更高效、更难以被逆向工程。4个步骤中的每一步都是可选的。  </p>
+<h2 id="入口点（Entry_points)">入口点（Entry points)</h2><p>从上面的描述可以知道，为了确定哪些代码需要保留，哪些代码可以丢弃或者混淆，就必须为你的代码指定一个或多个<strong>入口点（Entry point）</strong>。这些入口点通常是包含main方法的类、applet或者midlet等等。</p>
+<h2 id="反射（Reflection）">反射（Reflection）</h2><p>反射（reflection）和内省（introspection）对于任何对代码的自动处理都会表现出特别的问题。在ProGuard中，你的代码中被动态（也就是通过名字）创建或调用的类和类成员也都必须被指定为入口点。  </p>
+<p>比如，Class.forName()在运行时可能指向任何类。一般不可能预见到哪些类必须被以它们原来的名字保留，因为这些类的名字可能是从一个配置文件中读取到的。因此你必须在你的ProGuard配置中用简单的<code>-keep</code>选项来指定它们。  </p>
+<p>不过Proguard会自动为你检测并处理下面这些情况：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">● <span class="keyword">Class</span>.forName(<span class="string">"SomeClass"</span>)</span><br><span class="line">● SomeClass.<span class="keyword">class</span></span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getField(<span class="string">"someField"</span>)</span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getDeclaredField(<span class="string">"someField"</span>)</span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getMethod(<span class="string">"someMethod"</span>, <span class="keyword">new</span> <span class="keyword">Class</span>[] &#123;&#125;)</span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getMethod(<span class="string">"someMethod"</span>, <span class="keyword">new</span> <span class="keyword">Class</span>[] &#123; A.<span class="keyword">class</span> &#125;)</span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getMethod(<span class="string">"someMethod"</span>, <span class="keyword">new</span> <span class="keyword">Class</span>[] &#123; A.<span class="keyword">class</span>, B.<span class="keyword">class</span> &#125;)</span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getDeclaredMethod(<span class="string">"someMethod"</span>, <span class="keyword">new</span> <span class="keyword">Class</span>[] &#123;&#125;)</span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getDeclaredMethod(<span class="string">"someMethod"</span>, <span class="keyword">new</span> <span class="keyword">Class</span>[] &#123; A.<span class="keyword">class</span> &#125;)</span><br><span class="line">● SomeClass.<span class="keyword">class</span>.getDeclaredMethod(<span class="string">"someMethod"</span>, <span class="keyword">new</span> <span class="keyword">Class</span>[] &#123; A.<span class="keyword">class</span>, B.<span class="keyword">class</span> &#125;)</span><br><span class="line">● AtomicIntegerFieldUpdater.newUpdater(SomeClass.<span class="keyword">class</span>, <span class="string">"someField"</span>)</span><br><span class="line">● AtomicLongFieldUpdater.newUpdater(SomeClass.<span class="keyword">class</span>, <span class="string">"someField"</span>)</span><br><span class="line">● AtomicReferenceFieldUpdater.newUpdater(SomeClass.<span class="keyword">class</span>, SomeType.<span class="keyword">class</span>, <span class="string">"someField"</span>)</span><br></pre></td></tr></table></figure>
+<p>被引用的类和类成员在收缩阶段（shrinking phase）会被保留，字符串参数在混淆阶段（obfuscation phase）会被合理地更新。<br>除此之外，如果keeping某些类或类成员看起来是必要的，ProGuard就会提供一些建议。比如，ProGuard会对<code>(SomeClass)Class.forName(variable).newInstance()</code>这样的情况进行提示，指出这里的SomeClass类或接口以及它的实现类需要被原样保留。然后你就可以据此对你的ProGuard文件进行修改。</p>
+<h1 id="在Android_Studio中使用ProGuard">在Android Studio中使用ProGuard</h1><p>在Android Studio中，如果Build Type通过设置minifyEnabled属性来配置运行ProGuard，那么ProGuard插件（ProGuard plugin）就会自动被Android插件（Android plugin）使用，并自动创建task。配置方法如下：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">android</span> &#123;</span><br><span class="line">    <span class="title">buildTypes</span> &#123;</span><br><span class="line">        <span class="title">release</span> &#123;</span><br><span class="line">            <span class="title">minifyEnabled</span> <span class="built_in">true</span></span><br><span class="line">            proguardFiles getDefaultProguardFile(<span class="string">'proguard-android.txt'</span>), <span class="string">'proguard-rules.pro'</span>        //sample <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    productFlavors &#123;</span><br><span class="line">        <span class="title">flavor1</span> &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="title">flavor2</span> &#123;</span><br><span class="line">            <span class="title">proguardFile</span> <span class="string">'some-other-rules.txt'</span>            //sample <span class="number">2</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Android SDK中（具体路径是${sdk.dir}/tools/proguard/）存在2个默认的规则文件（rules files）：</p>
+<ul>
+<li>proguard-android.txt</li>
+<li>proguard-android-optimize.txt</li>
+</ul>
+<p>使用<code>getDefaultProguardFile()</code>会返回文件的完整路径。这2个文件除了是否开启优化（optimization）上不同，其他都是完全相同的。这2个默认文件（实际使用中只选择其中一个）定义了 ProGuard 会如何优化和混淆代码，默认的配置文件只涵盖一般的使用情形，针对自己具体的项目ProGuard的配置是需要实际情况进行定制的。<br>Android Studio在新建项目时，会在module的根目录下自动生成proguard-rules.pro文件，如果你需要自定义Proguard的配置，不需要去修改sdk下的那2个默认配置文件，只需要修改你的module根目录下的proguard-rules.pro就可以了。</p>
+<h2 id="配置_ProGuard">配置 ProGuard</h2><p>在某些情况下，proguard.cfg 文件中的默认配置足以满足您的需求。不过，在很多情况下，ProGuard 很难做出正确分析，因此可能会移除它认为无用而实际上您的应用却需要的代码。部分示例如下：</p>
+<ul>
+<li>一个只在 AndroidManifest.xml 文件中引用的类</li>
+<li>一个通过 JNI 调用的方法</li>
+<li>动态引用的字段和方法</li>
+</ul>
+<p>默认的 proguard.cfg 文件旨在涵盖一般的使用情形，但您可能会遇到异常情况，例如 ClassNotFoundException（此异常情况会在 ProGuard 删除您的应用调用的整个类时发生）。</p>
+<p>您可以通过在 proguard.cfg 文件中添加一个<code>-keep</code>行，来修复因 ProGuard 在删除代码而造成的错误。例如：</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby">keep public <span class="class"><span class="keyword">class</span> <span class="inheritance">&lt;<span class="parent">MyClass</span></span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>在使用 -keep 选项时，您既有许多选择也有不少需要注意的方面，因此我们强烈建议您阅读 <a href="http://stuff.mit.edu/afs/sipb/project/android/sdk/android-sdk-linux/tools/proguard/docs/index.html#manual/introduction.html" target="_blank" rel="external">ProGuard 手册</a>，详细了解如何自定义您的配置文件。该手册中的“Keep 选项概述”和“示例”部分尤其有用；<a href="http://stuff.mit.edu/afs/sipb/project/android/sdk/android-sdk-linux/tools/proguard/docs/index.html#manual/troubleshooting.html" target="_blank" rel="external">问题排查</a>部分则概述了在 ProGuard 删除代码后您可能会遇到的其他常见问题。</p>
+<h2 id="混淆结果">混淆结果</h2><p>ProGuard 在运行后会输出以下文件：</p>
+<p>①dump.txt<br>  描述 .apk 文件中所有类文件的内部结构。一个dump文件的示例片段如下：<br>    <img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-22/75237673.jpg" alt=""></p>
+<p>②mapping.txt<br>    列出原始与混淆后的类、方法和字段名称之间的对应关系。如果您从发布版本收到问题报告，则必须使用此文件，因为通过它可将混淆后的堆栈跟踪信息转换为原始的类、方法和成员名称。有关详情，请参阅<a href="http://developer.android.com/intl/zh-cn/tools/help/proguard.html#decoding" target="_blank" rel="external">解码混淆后的堆栈跟踪信息</a>。<br>    一个mapping.txt的片段如下：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-21/15237497.jpg" alt=""><br>从图中可以看出，类和类成员的名字都被替换成了无意义的字母。</p>
+<p>③seeds.txt<br>    列出未混淆的类和成员。一个示例文件片段如下：<br>    <img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-22/93038934.jpg" alt=""></p>
+<p>④usage.txt<br>    列出从 .apk 删除的代码。一个示例文件片段如下：<br>    <img src="http://7xle8x.com1.z0.glb.clouddn.com/15-12-22/38493078.jpg" alt=""></p>
+<p>这些文件都位于以下目录中：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">project_root</span>&gt;</span>/<span class="tag">&lt;<span class="title">module_root</span>&gt;</span>/build/outputs/mapping/</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>注意：</strong>每当您在发布模式下构建版本时，这些文件都会被 ProGuard 最新生成的文件覆盖。请在每次发布应用时为这些文件保存一份副本，以便反混淆来自发布版本的问题报告。</p>
+<p>每次向用户发布应用时，都请保存所发布版本的 mapping.txt 文件。这样一来，如果用户遇到问题，并向您提交混淆后的堆栈跟踪信息，您就可以利用为每个发布版本保存的 mapping.txt 文件副本调试问题。每当您构建发布版本时，项目的 mapping.txt 文件都会被覆盖，因此您必须谨慎保存所需的版本。</p>
+<p>例如，假设您发布了某个应用，并继续开发该应用的新功能，以便将来发布新版本。之后不久您使用 ProGuard 构建发布版本。此版本覆盖了之前的 mapping.txt 文件。之后，某位用户提交了问题报告，其中包含来自当前已发布的应用的堆栈跟踪信息。但您已无法调试该用户的堆栈跟踪信息，因为与该用户设备上的版本相关联的 mapping.txt 文件已被覆盖。除此之外，其他一些情况也可能会导致您的 mapping.txt 文件被覆盖。因此，如果您预计需要进行调试，请务必在每次发布应用时都保存一份副本。</p>
+<p>如何保存 mapping.txt 文件由您自行决定。例如，您可以将其重命名以使其名称中包含版本号，也可以对其（连同源代码一起）进行版本管理。</p>
+</blockquote>
+<h1 id="解码混淆后的堆栈跟踪信息">解码混淆后的堆栈跟踪信息</h1><p>当混淆后的代码输出堆栈跟踪信息时，方法名称会被混淆，即便仍能进行调试，难度也会很大。幸运的是，ProGuard 在每次运行时都会输出一个 <project_root>/<module_root>/build/outputs/mapping/mapping.txt 文件，其中会显示与混淆后的名称相对应的原始的类、方法和字段名称。</module_root></project_root></p>
+<p>Windows 上的 retrace.bat 脚本以及 Linux 或 Mac OS X 上的 retrace.sh 脚本可以将混淆后的堆栈跟踪信息转换成可读文件，此文件位于 <sdk_root>/tools/proguard/ 目录中。执行 retrace 工具的语法如下：</sdk_root></p>
+<figure class="highlight fsharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">retrace.bat|retrace.sh [-verbose] mapping.txt <span class="annotation">[&lt;stacktrace_file&gt;]</span></span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">retrace<span class="class">.bat</span> -verbose mapping<span class="class">.txt</span> obfuscated_trace.txt</span><br></pre></td></tr></table></figure>
+<p>如果您不为“<stacktrace_file>”指定值，retrace 工具会从标准输入中读取。</stacktrace_file></p>
+<h1 id="其他选项(options)">其他选项(options)</h1><p>Proguard拥有很多可用的选项，可以通过Proguard规则文件进行配置。  </p>
+<p>最常用的是keep选项，如果需要显示指定某个类要保留，可以使用keep来实现，比如：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-keep class com.android.support.<span class="keyword">*</span><span class="keyword">*</span> &#123;<span class="keyword">*</span>;&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你的代码需要打印堆栈信息，而混淆后的代码产生的堆栈信息可能无法正确获取行号和类信息，如果你需要这些信息来进行分析，可以强制保留这些信息：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">-keepattributes SourceFile,LineNumberTable</span></span><br></pre></td></tr></table></figure>
+<p>当你引用第三方库时，往往要同时使用keep和dontwarn，比如：</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby">libraryjars libs/log4j.jar</span><br><span class="line"></span>-<span class="ruby">dontwarn    org.apache.log4j.*</span><br><span class="line"></span>-<span class="ruby">keep <span class="class"><span class="keyword">class</span>  <span class="title">org</span>.<span class="title">apache</span>.<span class="title">log4j</span>.** &#123; *;</span>&#125;</span></span><br></pre></td></tr></table></figure>
+<p>将-dontwarn和-keep 结合使用，意思是保持包里面的所有类和所有方法而不混淆，接着还叫ProGuard不要警告找不到这个包里面的类的相关引用。  </p>
+<p>ProGuard有数量众多的options可用，如果需要查询各个option的用法，可以参考<a href="http://proguard.sourceforge.net/manual/usage.html" target="_blank" rel="external">ProGuard-Usage</a>。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2015/12/22/Android中的Proguard.html">Android中的Proguard</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">ljfxyj2008</a></p>
+        <p><span>发布时间:</span>2015-12-22, 14:21:56</p>
+        <p><span>最后更新:</span>2016-05-27, 11:31:28</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2015/12/22/Android中的Proguard.html" title="Android中的Proguard">http://www.carrotsight.com/2015/12/22/Android中的Proguard.html</a>
+            <span class="copy-path" data-clipboard-text="原文: http://www.carrotsight.com/2015/12/22/Android中的Proguard.html　　作者: ljfxyj2008" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html">
+                    Java中的Pluggable Annotation Processing API
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">
+                    可缩放时间轴和录像片段选择器的实现
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#什么是ProGuard"><span class="toc-number">1.</span> <span class="toc-text">什么是ProGuard</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#工作流程"><span class="toc-number">2.</span> <span class="toc-text">工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#入口点（Entry_points)"><span class="toc-number">2.1.</span> <span class="toc-text">入口点（Entry points)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#反射（Reflection）"><span class="toc-number">2.2.</span> <span class="toc-text">反射（Reflection）</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#在Android_Studio中使用ProGuard"><span class="toc-number">3.</span> <span class="toc-text">在Android Studio中使用ProGuard</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#配置_ProGuard"><span class="toc-number">3.1.</span> <span class="toc-text">配置 ProGuard</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#混淆结果"><span class="toc-number">3.2.</span> <span class="toc-text">混淆结果</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#解码混淆后的堆栈跟踪信息"><span class="toc-number">4.</span> <span class="toc-text">解码混淆后的堆栈跟踪信息</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#其他选项(options)"><span class="toc-number">5.</span> <span class="toc-text">其他选项(options)</span></a></li></ol>
+</div>
+<style>
+    .left-col .switch-btn {
+        display: none;
+    }
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+            $(".switch-btn, .switch-area").fadeOut(300);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+            $(".switch-btn, .switch-area").fadeIn(500);
+        }
+    })
+
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+        $(".switch-btn, .switch-area").show();
+    }
+</script>
+
+
+
+
+    <div class="share">
+    <div class="bdsharebuttonbox">
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+    <a href="#" class="bds_copy" data-cmd="copy" title="复制网址"></a>
+    <a href="#" class="bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+    </div>
+    <script>
+        window._bd_share_config={
+            "common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+    </script>
+</div>
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="2015/12/22/Android中的Proguard.html" data-title="Android中的Proguard" data-url="http://www.carrotsight.com/2015/12/22/Android中的Proguard.html"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"carrotsight"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+    <!-- 多说公共JS代码 end -->
+</div>
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html" title="上一篇: Java中的Pluggable Annotation Processing API">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html" title="下一篇: 可缩放时间轴和录像片段选择器的实现">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2016/05/25/system_server启动过程.html">System_server启动过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/24/Zygote启动过程.html">Zygote启动过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/01/学习笔记：Android中的View.html">学习笔记：Android中的View</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/29/学习笔记：Android的IPC机制.html">学习笔记：Android中的IPC机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">浅谈Android自定义Lint规则的实现 （二）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">浅谈Android自定义Lint规则的实现 （一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/01/13/2016-1-13-Java中的Pluggable-Annotation-Processing-API.html">Java中的Pluggable Annotation Processing API</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/22/Android中的Proguard.html">Android中的Proguard</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html">可缩放时间轴和录像片段选择器的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/11/13/一个android日志库的实现.html">一个android日志库的实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/10/10/FlatBuffers学习总结.html">FlatBuffers学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/19/2015-9-19-Android编程要注意的安全规范.html">Android编程要注意的安全规范</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/16/2015-9-16-《Think-in-Java》类型信息-–-学习笔记.html">《Think in Java》类型信息 – 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/15/2015-9-15-Otto学习笔记.html">Otto学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/14/2015-9-14-EventBus学习总结.html">EventBus学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/09/08/2015-9-8-《Think-in-Java》并发-学习笔记.html">《Think in Java》并发 - 学习笔记</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/12/02/2013-12-2-FLEX无法启动服务因为fml文件损坏.html">【FLEX bug:无法启动服务，因为fml文件损坏】的解决办法</a></li><li class="post-list-item"><a class="post-list-link" href="/2013/04/03/2013-4-3-Flex中datagrid中checkbox的全选实现.html">Flex中datagrid中checkbox的全选实现</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2016 ljfxyj2008
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题">Yelee</a> by MOxFIVE
+            </div>
+        </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.1.22/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 3;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-73957282-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+
+    <script src="//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js"></script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
