@@ -172,7 +172,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Annotation/" style="font-size: 10px;">Annotation</a> <a href="/tags/EventBus/" style="font-size: 13.33px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Lint/" style="font-size: 13.33px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/Proguard/" style="font-size: 10px;">Proguard</a> <a href="/tags/View/" style="font-size: 10px;">View</a> <a href="/tags/custom-lint-rules/" style="font-size: 13.33px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/system-server/" style="font-size: 10px;">system_server</a> <a href="/tags/zygote/" style="font-size: 13.33px;">zygote</a> <a href="/tags/反射/" style="font-size: 13.33px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/源码分析/" style="font-size: 13.33px;">源码分析</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
+                        <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Annotation/" style="font-size: 10px;">Annotation</a> <a href="/tags/EventBus/" style="font-size: 13.33px;">EventBus</a> <a href="/tags/FlatBuffers/" style="font-size: 10px;">FlatBuffers</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Lint/" style="font-size: 16.67px;">Lint</a> <a href="/tags/Otto/" style="font-size: 10px;">Otto</a> <a href="/tags/Proguard/" style="font-size: 10px;">Proguard</a> <a href="/tags/View/" style="font-size: 10px;">View</a> <a href="/tags/custom-lint-rules/" style="font-size: 13.33px;">custom lint rules</a> <a href="/tags/facebook/" style="font-size: 10px;">facebook</a> <a href="/tags/reflection/" style="font-size: 10px;">reflection</a> <a href="/tags/system-server/" style="font-size: 10px;">system_server</a> <a href="/tags/zygote/" style="font-size: 13.33px;">zygote</a> <a href="/tags/反射/" style="font-size: 13.33px;">反射</a> <a href="/tags/多线程/" style="font-size: 10px;">多线程</a> <a href="/tags/安全/" style="font-size: 10px;">安全</a> <a href="/tags/并发/" style="font-size: 10px;">并发</a> <a href="/tags/库项目/" style="font-size: 10px;">库项目</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/时间轴/" style="font-size: 10px;">时间轴</a> <a href="/tags/源码分析/" style="font-size: 13.33px;">源码分析</a> <a href="/tags/观察者模式/" style="font-size: 10px;">观察者模式</a>
                     </div>
                 </section>
                 
@@ -255,6 +255,71 @@
     </div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Android Lint工作原理剖析" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2016/06/21/Android Lint工作原理剖析.html" class="article-date">
+      <time datetime="2016-06-21T03:45:50.000Z" itemprop="datePublished">2016-06-21</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/06/21/Android Lint工作原理剖析.html">Android Lint工作原理剖析</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。本文结合源码对其工作原理进行分析。
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Lint/">Lint</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2016/06/21/Android Lint工作原理剖析.html#more">阅读全文 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
   
     <article id="post-system_server启动过程" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -840,71 +905,6 @@
       
         <p class="article-more-link">
           <a href="/2015/12/09/可缩放时间轴和录像片段选择器的实现.html#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-一个android日志库的实现" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/11/13/一个android日志库的实现.html" class="article-date">
-      <time datetime="2015-11-13T06:12:58.000Z" itemprop="datePublished">2015-11-13</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/11/13/一个android日志库的实现.html">一个android日志库的实现</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h1 id="调研">调研</h1><p>在android开发中，如果需要打印调试信息，往往会使用Log.d()、Log.e()之类的由android.util.Log提供的方法。它的好处是简单、方便，不足也很明显，可定制性差，不能打印到文件。如果想在发行版app中的某些关键语句打印log到文件，或者在app崩溃时把崩溃信息打印到文件供上传分析，那么android.util.Log就无能为力了。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Android/">Android</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/库项目/">库项目</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/日志/">日志</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2015/11/13/一个android日志库的实现.html#more">阅读全文 >></a>
         </p>
       
       <div class="clearfix"></div>
