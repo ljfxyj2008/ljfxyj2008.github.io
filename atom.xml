@@ -167,9 +167,9 @@
     
       <category term="zygote" scheme="http://www.carrotsight.com/tags/zygote/"/>
     
-      <category term="system_server" scheme="http://www.carrotsight.com/tags/system-server/"/>
-    
       <category term="源码分析" scheme="http://www.carrotsight.com/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"/>
+    
+      <category term="system_server" scheme="http://www.carrotsight.com/tags/system-server/"/>
     
   </entry>
   
@@ -770,10 +770,11 @@
     <link href="http://www.carrotsight.com/2015/12/09/%E5%8F%AF%E7%BC%A9%E6%94%BE%E6%97%B6%E9%97%B4%E8%BD%B4%E5%92%8C%E5%BD%95%E5%83%8F%E7%89%87%E6%AE%B5%E9%80%89%E6%8B%A9%E5%99%A8%E7%9A%84%E5%AE%9E%E7%8E%B0.html"/>
     <id>http://www.carrotsight.com/2015/12/09/可缩放时间轴和录像片段选择器的实现.html</id>
     <published>2015-12-09T06:53:40.000Z</published>
-    <updated>2016-06-22T08:05:11.000Z</updated>
+    <updated>2016-10-28T11:18:24.000Z</updated>
     
     <content type="html">&lt;p&gt;最近的工作是做了两个自定义控件：&lt;br&gt;①可以缩放的时间轴&lt;br&gt;②吸附在在时间轴上有两个滑动按钮的录像片段选择器  &lt;/p&gt;
 &lt;p&gt;真机测试效果如下面的gif动画所示：&lt;br&gt;&lt;img src=&quot;http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/74682253.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;———————–最近更新  华丽丽的分割线—————————&lt;br&gt;由于很多小伙伴私信我要源码，所以最近整理了一下，放在github上了，地址：&lt;br&gt;&lt;a href=&quot;https://github.com/ljfxyj2008/ScalableTimebar&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;https://github.com/ljfxyj2008/ScalableTimebar&lt;/a&gt;&lt;br&gt;———————–End of 最近更新—————————&lt;/p&gt;
 &lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
 &lt;p&gt;在此记录一下设计原理和踩过的坑。&lt;/p&gt;
 &lt;h2 id=&quot;时间轴&quot;&gt;时间轴&lt;/h2&gt;&lt;p&gt;时间轴分为两部分轴，刻度轴和录像片段轴。刻度轴用来绘制时间刻度表盘，录像片段轴用来指示对应位置有没有录像存在。&lt;br&gt;时间轴的视觉效果如下：&lt;br&gt;&lt;img src=&quot;http://7xle8x.com1.z0.glb.clouddn.com/15-12-9/11028878.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
@@ -822,6 +823,7 @@
     
       &lt;p&gt;最近的工作是做了两个自定义控件：&lt;br&gt;①可以缩放的时间轴&lt;br&gt;②吸附在在时间轴上有两个滑动按钮的录像片段选择器  &lt;/p&gt;
 &lt;p&gt;真机测试效果如下面的gif动画所示：&lt;br&gt;&lt;img src=&quot;http://7xle8x.com1.z0.glb.clouddn.com/15-12-10/74682253.jpg&quot; alt=&quot;&quot;&gt;&lt;/p&gt;
+&lt;p&gt;———————–最近更新  华丽丽的分割线—————————&lt;br&gt;由于很多小伙伴私信我要源码，所以最近整理了一下，放在github上了，地址：&lt;br&gt;&lt;a href=&quot;https://github.com/ljfxyj2008/ScalableTimebar&quot;&gt;https://github.com/ljfxyj2008/ScalableTimebar&lt;/a&gt;&lt;br&gt;———————–End of 最近更新—————————&lt;/p&gt;
     
     </summary>
     
