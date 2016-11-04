@@ -29,7 +29,7 @@
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-14/97287156.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-14/6501806.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-4-14/70344961.jpg">
-<meta property="og:updated_time" content="2016-06-22T08:05:11.000Z">
+<meta property="og:updated_time" content="2016-11-04T11:17:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Lint工作原理剖析">
 <meta name="twitter:description" content="Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。本文结合源码对其工作原理进行分析。">
@@ -336,7 +336,8 @@
         <h2 id="官方对自定义Lint的支持">官方对自定义Lint的支持</h2><p>Android Lint是Android SDK提供的一项静态代码分析工具，对于提高代码质量具有重要作用。到目前为止，Android SDK自带的Lint检查项目达到了253项，我们在开发过程中经常见到的提示信息比如“Id被重复定义”“HandlerLeak风险”其实都是由Lint检查实现的。</p>
 <p>Android Studio 2.0 Stable版本已经于2016年4月7日正式发布。除了Instant Run让人眼前一亮，更让人惊喜的是，官方已经悄然把自定义Lint的检查与IDE整合起来了。在此之前，自定义Lint规则只能通过在终端中执行gradle任务来运行，然后生成报告文件。<br>Android Studio 2.0中整合自定义Lint检查的效果如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-4-13/85143697.jpg" alt=""></p>
 <p>图中红线提示的错误是我自定义的Lint规则检查的结果，大意是Activity使用的布局文件应该以“activity_”为前缀进行命名。  </p>
-<p>关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我之前的文章：<br><a href="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现%20（一）.html">浅谈Android自定义Lint规则的实现 （一）</a><br><a href="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现%20（二）.html">浅谈Android自定义Lint规则的实现 （二）</a></p>
+<p>关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：<br><a href="http://carrotsight.com/2016/06/21/Android%20Lint%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90.html" target="_blank" rel="external">Android Lint工作原理剖析</a><br><a href="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现%20（一）.html">浅谈Android自定义Lint规则的实现 （一）</a><br><a href="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现%20（二）.html">浅谈Android自定义Lint规则的实现 （二）</a></p>
+<p>相关Demo代码可以参见我的github代码库：<br><a href="https://github.com/ljfxyj2008/CustomLintDemo" target="_blank" rel="external">CustomLintDemo</a></p>
 <p>从Android Studio的“偏好”设置窗口中，用户可以设置IDE整合的Lint检查功能的细节，如图：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-4-13/26772828.jpg" alt=""></p>
 <p>虽然这个设置选项在旧版的Android Studio中也能看到，但实际上在旧版中是不起作用的。  </p>
 <p>除了在Editor中能够以红色下划线标注自定义检查项目外，使用Android Studio的 “Analyze” –&gt; “Inspect Code”现在也会检查自定义Lint规则中定义的项目了。Android Studio 2.0的这一功能整合真是太棒了，大大提高了自定义Lint的实用性。</p>
@@ -425,7 +426,7 @@
         <p><span>本文标题:</span><a href="/2016/06/21/Android Lint工作原理剖析.html">Android Lint工作原理剖析</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ljfxyj2008</a></p>
         <p><span>发布时间:</span>2016-06-21, 11:45:50</p>
-        <p><span>最后更新:</span>2016-06-22, 16:05:11</p>
+        <p><span>最后更新:</span>2016-11-04, 19:17:14</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/06/21/Android Lint工作原理剖析.html" title="Android Lint工作原理剖析">http://www.carrotsight.com/2016/06/21/Android Lint工作原理剖析.html</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.carrotsight.com/2016/06/21/Android Lint工作原理剖析.html　　作者: ljfxyj2008" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

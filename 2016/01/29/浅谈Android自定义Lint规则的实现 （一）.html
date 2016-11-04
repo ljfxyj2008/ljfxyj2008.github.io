@@ -16,13 +16,13 @@
 
 
 <meta name="description" content="最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。
-什么是Android LintAndroid Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。">
+关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：Android Lint工作原理剖析浅谈Android自定义Lint规则的实现 （一）浅谈Android自定义Li">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅谈Android自定义Lint规则的实现 （一）">
 <meta property="og:url" content="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">
 <meta property="og:site_name" content="ljfxyj2008风巢">
 <meta property="og:description" content="最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。
-什么是Android LintAndroid Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。">
+关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：Android Lint工作原理剖析浅谈Android自定义Lint规则的实现 （一）浅谈Android自定义Li">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/23031672.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/32957935.jpg">
 <meta property="og:image" content="http://developer.android.com/images/tools/lint.png">
@@ -43,11 +43,11 @@
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/8544219.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/11713429.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-8/9825338.jpg">
-<meta property="og:updated_time" content="2016-06-22T08:13:58.000Z">
+<meta property="og:updated_time" content="2016-11-04T11:17:34.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈Android自定义Lint规则的实现 （一）">
 <meta name="twitter:description" content="最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。
-什么是Android LintAndroid Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。">
+关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：Android Lint工作原理剖析浅谈Android自定义Lint规则的实现 （一）浅谈Android自定义Li">
 <meta name="twitter:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/23031672.jpg">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
@@ -349,6 +349,8 @@
       
           
         <p>最近在做一个基于Android Lint的自定义静态代码检查功能库，这里做一个简单的总结。前半部分介绍SDK自带Android Lint的功能与配置使用方法，后半部分介绍扩展自定义Lint规则库的开发流程。</p>
+<p>关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：<br><a href="http://carrotsight.com/2016/06/21/Android%20Lint%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90.html" target="_blank" rel="external">Android Lint工作原理剖析</a><br><a href="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现%20（一）.html">浅谈Android自定义Lint规则的实现 （一）</a><br><a href="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现%20（二）.html">浅谈Android自定义Lint规则的实现 （二）</a></p>
+<p>相关Demo代码可以参见我的github代码库：<br><a href="https://github.com/ljfxyj2008/CustomLintDemo" target="_blank" rel="external">CustomLintDemo</a></p>
 <h2 id="什么是Android_Lint">什么是Android Lint</h2><p>Android Lint是一个静态代码分析工具，它能够对你的Android项目中潜在的bug、可优化的代码、安全性、性能、可用性、可访问性、国际化等进行检查。  </p>
 <p>在Android SDK Tools 16及更高的版本中，Lint工具会自动安装。通过它对Android工程源代码进行扫描和检查，可发现潜在的问题，以便程序员及早修正这个问题。Android Lint提供了命令行方式执行，还与IDE（如Android Studio）进行了集成，并提供了xml和html形式的输出报告。  </p>
 <p>看了上面的介绍可能大家依然很迷惑“这货到底有啥用”，其实我们平时在Android开发过程中一直在享受Lint带来的便利。比如，下面图中的警告和错误提示，相信大家应该很熟悉吧：<br><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/23031672.jpg" alt=""></p>
@@ -495,7 +497,7 @@
         <p><span>本文标题:</span><a href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html">浅谈Android自定义Lint规则的实现 （一）</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ljfxyj2008</a></p>
         <p><span>发布时间:</span>2016-01-29, 11:00:50</p>
-        <p><span>最后更新:</span>2016-06-22, 16:13:58</p>
+        <p><span>最后更新:</span>2016-11-04, 19:17:34</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html" title="浅谈Android自定义Lint规则的实现 （一）">http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现 （一）.html　　作者: ljfxyj2008" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

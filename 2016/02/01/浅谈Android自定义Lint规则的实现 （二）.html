@@ -15,21 +15,27 @@
 
 
 
-<meta name="description" content="上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。">
+<meta name="description" content="关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：Android Lint工作原理剖析浅谈Android自定义Lint规则的实现 （一）浅谈Android自定义Lint规则的实现 （二）
+相关Demo代码可以参见我的github代码库：CustomLintDemo
+上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浅谈Android自定义Lint规则的实现 （二）">
 <meta property="og:url" content="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">
 <meta property="og:site_name" content="ljfxyj2008风巢">
-<meta property="og:description" content="上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。">
+<meta property="og:description" content="关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：Android Lint工作原理剖析浅谈Android自定义Lint规则的实现 （一）浅谈Android自定义Lint规则的实现 （二）
+相关Demo代码可以参见我的github代码库：CustomLintDemo
+上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/14308921.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-7/55021440.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/67433168.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/92067715.jpg">
 <meta property="og:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-2-1/36527297.jpg">
-<meta property="og:updated_time" content="2016-06-22T08:09:58.000Z">
+<meta property="og:updated_time" content="2016-11-04T11:17:45.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浅谈Android自定义Lint规则的实现 （二）">
-<meta name="twitter:description" content="上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。">
+<meta name="twitter:description" content="关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：Android Lint工作原理剖析浅谈Android自定义Lint规则的实现 （一）浅谈Android自定义Lint规则的实现 （二）
+相关Demo代码可以参见我的github代码库：CustomLintDemo
+上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方">
 <meta name="twitter:image" content="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/14308921.jpg">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
@@ -330,7 +336,9 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。</p>
+        <p>关于Lint的一些基本知识，以及自定义Lint如何实现，可以参考我的系列文章：<br><a href="http://carrotsight.com/2016/06/21/Android%20Lint%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%89%96%E6%9E%90.html" target="_blank" rel="external">Android Lint工作原理剖析</a><br><a href="http://www.carrotsight.com/2016/01/29/浅谈Android自定义Lint规则的实现%20（一）.html">浅谈Android自定义Lint规则的实现 （一）</a><br><a href="http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现%20（二）.html">浅谈Android自定义Lint规则的实现 （二）</a></p>
+<p>相关Demo代码可以参见我的github代码库：<br><a href="https://github.com/ljfxyj2008/CustomLintDemo" target="_blank" rel="external">CustomLintDemo</a></p>
+<p>上一篇文章针对Android自定义Lint规则的总体开发流程做了介绍，本文针对java源代码Lint检测方法做细节介绍。由于网上关于自定义Lint规则的文章比较有限，且对于lombok.ast库的相关细节几乎没有文档可用，所以本文内容主要是根据自身开发经验做的总结，难免会有疏漏或错误，还请各位大神批评指正。</p>
 <a id="more"></a>
 <h2 id="检测Java源代码">检测Java源代码</h2><p>针对Java源代码做Lint检测，我们需要让自定义的XXXDetector类继承com.android.tools.lint.detector.api.Detector类，并实现com.android.tools.lint.detector.api.Detector.JavaScanner接口，同时在该XXXDetector对应的Issue中定义检测的范围为com.android.tools.lint.detector.api.Scope.JAVA_FILE_SCOPE，如图：  </p>
 <p><img src="http://7xle8x.com1.z0.glb.clouddn.com/16-1-29/14308921.jpg" alt="">  </p>
@@ -391,7 +399,7 @@
         <p><span>本文标题:</span><a href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html">浅谈Android自定义Lint规则的实现 （二）</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">ljfxyj2008</a></p>
         <p><span>发布时间:</span>2016-02-01, 11:30:35</p>
-        <p><span>最后更新:</span>2016-06-22, 16:09:58</p>
+        <p><span>最后更新:</span>2016-11-04, 19:17:45</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html" title="浅谈Android自定义Lint规则的实现 （二）">http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html</a>
             <span class="copy-path" data-clipboard-text="原文: http://www.carrotsight.com/2016/02/01/浅谈Android自定义Lint规则的实现 （二）.html　　作者: ljfxyj2008" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
